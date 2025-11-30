@@ -20,6 +20,21 @@ class Customer extends db_conn {
     }
 
     /**
+     * Update customer details
+     */
+    public function update_customer($id, $name, $contact, $city, $country) {
+        $sql = "UPDATE customer SET 
+                customer_name = ?, 
+                customer_contact = ?, 
+                customer_city = ?, 
+                customer_country = ? 
+                WHERE customer_id = ?";
+        
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$name, $contact, $city, $country, $id]);
+    }
+
+    /**
      * Get customer details by ID
      */
     public function get_customer($customer_id)

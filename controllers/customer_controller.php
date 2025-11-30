@@ -22,4 +22,14 @@ function get_customer_ctr($customer_id)
     $customer = new Customer();
     return $customer->get_customer($customer_id);
 }
+
+/**
+ * Update Customer Details
+ */
+function update_customer_ctr($id, $name, $contact, $city, $country) {
+    // Ensure the class is included
+    // require_once '../classes/customer_class.php'; (Ensure this is at top of file)
+    $customer = new customer_class();
+    return $customer->update_customer($id, $name, $contact, $city, $country);
+}
 ?>
