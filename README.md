@@ -57,7 +57,7 @@ Unlike standard e-commerce sites, GBVAid handles **Service Bookings** rather tha
 This project is built using a custom **Model-View-Controller (MVC)** architecture to ensure code modularity and security.
 
 * **Actions:** Handle form submissions and AJAX requests.
-* **Controllers:** Act as the bridge, processing logic and calling the classes.
+* **Controllers:** Act as the bridge, processing logic, and calling the classes.
 * **Classes (Models):** Handle direct database interactions (PDO).
 * **Views:** The frontend user interface.
 * **Settings:** Database connection and core configurations.
@@ -96,15 +96,15 @@ The system relies on the following key tables:
 ### Steps
 1.  **Clone the Repository**
     ```bash
-    git clone [https://github.com/yourusername/gbvaid.git](https://github.com/yourusername/gbvaid.git)
+    git clone https://github.com/AmannaP/Final-E-commerce-Platform.git
     ```
 2.  **Move to HTDOCS**
     Copy the project folder into your `htdocs` (XAMPP) or `www` (WAMP) directory.
 
 3.  **Import Database**
     * Open **phpMyAdmin**.
-    * Create a database named `shoppn` (or update `db_cred.php`).
-    * Import the `database/shoppn.sql` file included in this repo.
+    * Create a database named `dbforlab` (or update `db_cred.php`).
+    * Import the `database/dbforlab.sql` file included in this repo.
 
 4.  **Configure Database Connection**
     * Navigate to `settings/db_cred.php`.
@@ -115,7 +115,7 @@ The system relies on the following key tables:
     * Enter your **Paystack Public Key** and **Secret Key**.
 
 6.  **Run the Application**
-    * Open your browser and visit: `http://localhost/gbvaid/index.php`
+    * Open your browser and visit: `http://localhost/GBVAid/index.php`
 
 ---
 
