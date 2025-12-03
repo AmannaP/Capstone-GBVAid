@@ -102,8 +102,8 @@ if (file_exists('../includes/navbar.php')) {
                     <div class="icon-circle mx-auto" style="background-color: #d1fae5; color: #c453eaff;">
                         <i class="bi bi-chat-heart-fill"></i>
                     </div>
-                    <h5 class="fw-bold">Chat with a Counselor</h5>
-                    <p class="text-muted small mb-4">Connect with certified professionals for emotional and psychological support.</p>
+                    <h5 class="fw-bold">Community Dialogue Space</h5>
+                    <p class="text-muted small mb-4">Connect with other victims/survivor with similar cases for survival tips.</p>
                     <a href="chat.php" class="btn btn-success btn-action" style="background-color: #c453eaff; border:none;">Start Chat</a>
                 </div>
             </div>

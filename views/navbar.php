@@ -173,14 +173,33 @@ $customer_name = $is_logged_in ? ($_SESSION['name'] ?? 'User') : 'Guest';
                 <?php if ($is_logged_in): ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <div style="width: 30px; height: 30px; background: white; color: #c453eaff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 8px;">
-                                <i class="bi bi-person-fill"></i>
-                            </div>
+                            
+                            <?php
+                                // 1. Default to Initials Avatar
+                                $user_img_path = "https://ui-avatars.com/api/?name=" . urlencode($_SESSION['name']) . "&background=fff&color=c453ea&bold=true";
+
+                                // 2. Check if custom image exists in Session
+                                if (isset($_SESSION['user_image']) && !empty($_SESSION['user_image'])) {
+                                    $img_name = $_SESSION['user_image'];
+                                    
+                                    // Determine correct path based on where this file is included
+                                    // We assume uploads is at project_root/uploads/users/
+                                    $possible_path = dirname(__DIR__) . "/uploads/users/" . $img_name;
+                                    
+                                    if (file_exists($possible_path)) {
+                                        // Add timestamp for cache busting
+                                        $user_img_path = "../uploads/users/" . $img_name . "?v=" . time();
+                                    }
+                                }
+                            ?>
+                            
+                            <img src="<?= $user_img_path ?>" alt="Profile" 
+                                 style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 8px; border: 2px solid white;">
                             <?= htmlspecialchars($customer_name) ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item" href="../user/profile.php"><i class="bi bi-person me-2"></i>My Profile</a></li>
-                            <li><a class="dropdown-item" href="../user/my_appointments.php"><i class="bi bi-box-seam me-2"></i>My Appointments</a></li>
+                            <li><a class="dropdown-item" href="../user/my_appointments.php"><i class="bi bi-calendar-check me-2"></i>My Sessions</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item text-danger" href="../login/logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                         </ul>

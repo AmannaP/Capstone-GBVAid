@@ -21,4 +21,14 @@ function get_messages_ctr($group_id) {
     $chat = new Chat();
     return $chat->get_messages($group_id);
 }
+
+function create_group_ctr($name, $desc, $icon) {
+    $chat = new Chat();
+    return $chat->create_group($name, $desc, $icon);
+}
+
+function delete_group_ctr($id) {
+    $chat = new Chat();
+    return $chat->delete_group($id);
+}
 ?>

@@ -41,21 +41,6 @@ requireAdmin();
             transform: translateY(-2px);
         }
 
-        .btn-logout {
-            background-color: white;
-            color: #c453eaff;
-            border: 2px solid white;
-            border-radius: 50px;
-            padding: 5px 20px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        .btn-logout:hover {
-            background-color: transparent;
-            color: white;
-        }
-
         /* Dashboard Header */
         .dashboard-header {
             margin-top: 50px;
@@ -126,11 +111,27 @@ requireAdmin();
             background-color: #a020f0;
             color: white;
         }
+        
+        /* Logout Button */
+        .btn-logout {
+            background-color: white;
+            color: #c453eaff;
+            border: 2px solid white;
+            border-radius: 50px;
+            padding: 5px 20px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-logout:hover {
+            background-color: transparent;
+            color: white;
+        }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-admin navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-admin navbar-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="#"><i class="bi bi-shield-lock-fill me-2"></i>GBVAid Admin</a>
             
@@ -142,11 +143,34 @@ requireAdmin();
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item mx-2"><a href="../admin/brand.php" class="nav-link">Brands</a></li>
                     <li class="nav-item mx-2"><a href="../admin/category.php" class="nav-link">Categories</a></li>
-                    <li class="nav-item ms-4 d-flex align-items-center">
-                        <span class="text-white me-3 fw-bold">
-                            <?= htmlspecialchars($_SESSION['name']); ?>
-                        </span>
-                        <a href="../login/logout.php" class="btn-logout">Logout</a>
+                    <li class="nav-item mx-2"><a href="../admin/product.php" class="nav-link">Services</a></li>
+                    
+                    <li class="nav-item dropdown ms-4">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <?php
+                                // Logic to check for profile image
+                                $admin_img_path = "https://ui-avatars.com/api/?name=" . urlencode($_SESSION['name']) . "&background=fff&color=c453ea";
+
+                                if (isset($_SESSION['user_image']) && !empty($_SESSION['user_image'])) {
+                                    $server_path = "../uploads/users/" . $_SESSION['user_image'];
+                                    // Only use the local image if it actually exists on the server
+                                    if (file_exists($server_path)) {
+                                        // Add time() to force browser to reload the image (Cache Busting)
+                                        $admin_img_path = $server_path . "?v=" . time();
+                                    }
+                                }
+                            ?>
+                            <img src="<?= $admin_img_path ?>" alt="Admin" 
+                                style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 10px; border: 2px solid white;">
+                            <span class="fw-bold text-white">
+                                <?= htmlspecialchars($_SESSION['name']); ?>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow" aria-labelledby="adminDropdown">
+                            <li><a class="dropdown-item" href="profile.php"><i class="bi bi-person-gear me-2"></i>Edit Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="../login/logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        </ul>
                     </li>
                 </ul>
             </div>
@@ -162,49 +186,62 @@ requireAdmin();
         </div>
 
         <div class="row g-4 justify-content-center">
-            <div class="col-md-4">
+            
+            <div class="col-md-6 col-lg-4">
                 <div class="dashboard-card">
                     <div class="card-icon">
                         <i class="bi bi-box-seam"></i>
                     </div>
                     <h5>Manage Services</h5>
-                    <p>View, create, and organize GBV support service categories such as counseling, shelters, legal aid, and emergency contacts.</p>
+                    <p>View, create, and organize GBV support service categories and providers.</p>
                     <a href="../admin/product.php" class="btn-purple">Go to Services</a>
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-6 col-lg-4">
                 <div class="dashboard-card">
                     <div class="card-icon">
                         <i class="bi bi-file-earmark-medical"></i>
                     </div>
                     <h5>Survivor Reports</h5>
-                    <p>Review and manage confidential cases or reports submitted by users who have experienced gender-based violence.</p>
+                    <p>Review and manage confidential cases submitted by survivors.</p>
                     <a href="../admin/reports.php" class="btn-purple">View Reports</a>
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <h5>Appointments</h5>
+                    <p>Manage appointment bookings made by users with service providers.</p>
+                    <a href="../admin/bookings.php" class="btn-purple">View Bookings</a>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
                 <div class="dashboard-card">
                     <div class="card-icon">
                         <i class="bi bi-megaphone"></i>
                     </div>
-                    <h5>Awareness Content</h5>
-                    <p>Post educational materials, campaigns, and preventive information to raise awareness about GBV.</p>
+                    <h5>Awareness</h5>
+                    <p>Post educational materials and campaigns to raise awareness about GBV.</p>
                     <a href="../admin/awareness.php" class="btn-purple">Manage Content</a>
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-6 col-lg-4">
                 <div class="dashboard-card">
                     <div class="card-icon">
-                        <i class="bi bi-file-earmark-medical"></i>
+                        <i class="bi bi-chat-square-quote-fill"></i>
                     </div>
-                    <h5>Appointments Reports</h5>
-                    <p>Manage appointment bookings made by users on various services and brands.</p>
-                    <a href="../admin/bookings.php" class="btn-purple">View Reports</a>
+                    <h5>Chat Groups</h5>
+                    <p>Create and manage community support chat rooms for different survivor groups.</p>
+                    <a href="../admin/manage_groups.php" class="btn-purple">Manage Groups</a>
                 </div>
             </div>
+            
         </div>
 
         <div class="text-center mt-5 mb-4">

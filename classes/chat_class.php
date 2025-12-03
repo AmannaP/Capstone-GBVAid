@@ -45,5 +45,28 @@ class Chat extends db_conn {
         $stmt->execute([$group_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // 5. Create a new chat group
+    public function create_group($name, $desc, $icon) {
+        if (!$this->db_connect()) return false;
+        
+        $sql = "INSERT INTO chat_groups (group_name, description, icon) VALUES (?, ?, ?)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$name, $desc, $icon]);
+    }
+
+    // 6. Delete a chat group
+    public function delete_group($id) {
+        if (!$this->db_connect()) return false;
+        
+        // Delete messages first to maintain referential integrity
+        $sqlMsg = "DELETE FROM chat_messages WHERE group_id = ?";
+        $stmtMsg = $this->db->prepare($sqlMsg);
+        $stmtMsg->execute([$id]);
+
+        $sql = "DELETE FROM chat_groups WHERE group_id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$id]);
+    }
 }
 ?>

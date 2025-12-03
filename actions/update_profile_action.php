@@ -53,11 +53,15 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === 0) 
 
 // Update Database
 $result = update_customer_ctr($user_id, $name, $contact, $city, $country, $image_name);
-
 if ($result) {
-    $_SESSION['name'] = $name; // Update session name
+    // 1. Update Name in Session
+    $_SESSION['name'] = $name; 
+    
+    // 2. Update Image in Session (Only if a new one was uploaded)
+    if ($image_name) {
+        $_SESSION['user_image'] = $image_name;
+    }
+
     echo json_encode(['status' => 'success', 'message' => 'Profile updated successfully']);
-} else {
-    echo json_encode(['status' => 'error', 'message' => 'Database update failed']);
 }
 ?>
