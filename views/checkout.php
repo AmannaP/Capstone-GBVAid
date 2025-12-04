@@ -12,7 +12,7 @@ if (!$cart_items || count($cart_items) == 0) {
     exit();
 }
 
-// Calculate Totals (Must match cart.php logic)
+// === SERVER-SIDE CALCULATION (Reliable) ===
 $subtotal = 0;
 foreach ($cart_items as $item) {
     $subtotal += ($item['product_price'] * $item['qty']);
@@ -32,14 +32,14 @@ $grand_total = $subtotal + $tax + $service_fee;
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     
     <style>
-        /* 1. Purple Background */
+        /* Purple Background */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background-color: #c453eaff; 
             min-height: 100vh;
         }
         
-        /* 2. Navbar Styling (White) */
+        /* Navbar Styling */
         .navbar { 
             background: white; 
             padding: 15px 0; 
@@ -62,7 +62,7 @@ $grand_total = $subtotal + $tax + $service_fee;
             color: #c453eaff;
         }
         
-        /* 3. Checkout Container (White Card) */
+        /* Checkout Container */
         .checkout-card { 
             background: white; 
             border-radius: 15px; 
@@ -86,26 +86,19 @@ $grand_total = $subtotal + $tax + $service_fee;
             font-weight: 700;
         }
         
-        /* 4. Booking Summary Styles */
-        .checkout-item {
-            transition: background-color 0.2s;
-        }
-        .checkout-item:hover {
-            background-color: #f9f9f9;
-        }
-        
+        /* Breakdown Box */
         .summary-total-container { 
-            background-color: #f3e8ff; /* Light purple bg */
-            border: 1px solid #e598ffff;
+            background-color: #f8f9fa; 
+            border: 1px solid #eee;
             border-radius: 10px;
-            padding: 20px;
+            padding: 25px;
             margin: 30px 0; 
         }
         
         .summary-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             color: #555;
             font-size: 0.95rem;
         }
@@ -113,9 +106,10 @@ $grand_total = $subtotal + $tax + $service_fee;
         .total-row {
             display: flex;
             justify-content: space-between;
-            border-top: 1px solid #d1a3e2;
+            border-top: 2px solid #e598ffff;
             padding-top: 15px;
-            margin-top: 10px;
+            margin-top: 15px;
+            align-items: center;
         }
 
         .total-label {
@@ -125,21 +119,22 @@ $grand_total = $subtotal + $tax + $service_fee;
         }
         
         .total-amount {
-            font-size: 24px; 
+            font-size: 28px; 
             font-weight: 800; 
             color: #c453eaff; 
         }
         
-        /* 5. Buttons */
+        /* Buttons */
         .btn-purple { 
             background-color: #c453eaff; 
             color: white; 
             border: 2px solid #c453eaff; 
-            padding: 12px 30px;
+            padding: 14px 30px;
             font-weight: 600;
             border-radius: 50px;
             transition: all 0.3s;
             width: 100%;
+            font-size: 1.1rem;
         }
         .btn-purple:hover { 
             background-color: white; 
@@ -147,20 +142,7 @@ $grand_total = $subtotal + $tax + $service_fee;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
-        .btn-secondary-custom {
-            background: white;
-            color: #555;
-            border: 2px solid #eee;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-weight: 600;
-        }
-        .btn-secondary-custom:hover {
-            border-color: #c453eaff;
-            color: #c453eaff;
-        }
-        
-        /* 6. Modals */
+        /* Modals */
         .modal { 
             background: rgba(0,0,0,0.6); 
             backdrop-filter: blur(5px);
@@ -170,11 +152,6 @@ $grand_total = $subtotal + $tax + $service_fee;
             border-radius: 20px; 
             border: none;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
-        }
-        
-        .modal-header {
-            border-bottom: none;
-            padding-bottom: 0;
         }
         
         .secure-badge {
@@ -191,7 +168,7 @@ $grand_total = $subtotal + $tax + $service_fee;
 
     <nav class="navbar fixed-top">
         <div class="container">
-            <a href="../index.php" class="logo">GBVAid</a>
+            <a href="../user/dashboard.php" class="logo">GBVAid</a>
             <a href="cart.php" class="nav-link-custom">
                 <i class="bi bi-arrow-left me-1"></i> Back to Booking List
             </a>
@@ -231,7 +208,7 @@ $grand_total = $subtotal + $tax + $service_fee;
                 
                 <div class="total-row">
                     <span class="total-label">Total to Pay:</span>
-                    <span id="checkoutTotal" class="total-amount">GH₵ <?= number_format($grand_total, 2) ?></span>
+                    <span id="grandTotalDisplay" class="total-amount">GH₵ <?= number_format($grand_total, 2) ?></span>
                 </div>
             </div>
             
@@ -246,13 +223,13 @@ $grand_total = $subtotal + $tax + $service_fee;
     <div id="paymentModal" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header border-0">
                     <h5 class="modal-title fw-bold">Secure Booking</h5>
                     <button type="button" class="btn-close" onclick="closePaymentModal()"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="text-center mb-4">
-                        <small class="text-muted">TOTAL COST</small>
+                        <small class="text-muted text-uppercase fw-bold">Amount Charged</small>
                         <div id="paymentAmount" style="font-size: 36px; font-weight: 800; color: #c453eaff;">
                             </div>
                     </div>
@@ -313,15 +290,9 @@ $grand_total = $subtotal + $tax + $service_fee;
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script src="../js/checkout.js"></script>
     
     <script>
-        // Store original functions
-        const originalShowPayment = window.showPaymentModal;
-        const originalClosePayment = window.closePaymentModal;
-        const originalShowSuccess = window.showSuccessModal;
-
         // Bootstrap Modal Instances
         let paymentModalBS;
         let successModalBS;
@@ -331,14 +302,14 @@ $grand_total = $subtotal + $tax + $service_fee;
             successModalBS = new bootstrap.Modal(document.getElementById('successModal'));
         });
 
-        // Override to use Bootstrap
+        // Override Open Modal
         window.showPaymentModal = function() {
-            // Use the PHP-calculated total to prevent JS errors
             const amountDisplay = document.getElementById('paymentAmount');
             if (amountDisplay) {
+                // Use PHP calculated total
                 amountDisplay.textContent = `GH₵ ${window.grandTotal}`;
             }
-            // Update the global total for the JS processing script
+            // Force the global variable used by processCheckout to match PHP total
             window.checkoutTotal = window.grandTotal;
             
             paymentModalBS.show();
@@ -349,30 +320,17 @@ $grand_total = $subtotal + $tax + $service_fee;
         };
 
         window.showSuccessModal = function(orderData) {
-            // Populate data (logic from original JS)
-            const invoiceEl = document.getElementById('successInvoice');
-            const amountEl = document.getElementById('successAmount');
-            const dateEl = document.getElementById('successDate');
-            
-            if (invoiceEl) invoiceEl.textContent = orderData.invoice_no || 'N/A';
-            if (amountEl) amountEl.textContent = `GH₵ ${orderData.total_amount || '0.00'}`;
-            if (dateEl) dateEl.textContent = orderData.order_date || new Date().toLocaleString();
+            // Populate success data
+            document.getElementById('successInvoice').textContent = orderData.invoice_no || 'N/A';
+            document.getElementById('successAmount').textContent = `GH₵ ${orderData.total_amount || '0.00'}`;
+            document.getElementById('successDate').textContent = orderData.order_date || new Date().toLocaleString();
             
             successModalBS.show();
-            
-            // Trigger confetti if function exists
             if (typeof createConfetti === 'function') createConfetti();
         };
         
-        // Navigation overrides for the new context
-        function continueShopping() {
-            window.location.href = '../user/product_page.php';
-        }
-        
-        function viewOrders() {
-            // Changed link to My Appointments
-            window.location.href = '../user/my_appointments.php';
-        }
+        function continueShopping() { window.location.href = '../user/product_page.php'; }
+        function viewOrders() { window.location.href = '../user/my_appointments.php'; }
     </script>
 </body>
 </html>
