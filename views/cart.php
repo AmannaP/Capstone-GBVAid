@@ -138,13 +138,37 @@ $cart_items = get_user_cart_ctr($customer_id ?? $ip_add);
             border-radius: 8px;
             border: 1px solid #eee;
         }
+
+        /* Summary Box */
+        .summary-box {
+            background-color: #f8f9fa;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        .summary-total {
+            border-top: 2px solid #e598ffff;
+            padding-top: 15px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #c453eaff;
+        }
     </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light">
     <div class="container">
-        <a class="navbar-brand" href="../user/product_page.php">GBVAid</a>
+        <a class="navbar-brand" href="../user/dashboard.php">GBVAid</a>
         <div class="d-flex align-items-center">
             <span class="navbar-text">Your Booking List</span>
         </div>
@@ -181,10 +205,10 @@ $cart_items = get_user_cart_ctr($customer_id ?? $ip_add);
 
                     <tbody>
                         <?php
-                        $total_amount = 0;
+                        $subtotal = 0;
                         foreach ($cart_items as $item):
-                            $subtotal = $item['product_price'] * $item['qty'];
-                            $total_amount += $subtotal;
+                            $item_total = $item['product_price'] * $item['qty'];
+                            $subtotal += $item_total;
                         ?>
 
                         <tr id="cart-row-<?= $item['p_id'] ?>">
@@ -215,7 +239,7 @@ $cart_items = get_user_cart_ctr($customer_id ?? $ip_add);
                             </td>
 
                             <td class="fw-bold" style="color: #c453eaff;">
-                                GH₵ <?= number_format($subtotal, 2) ?>
+                                GH₵ <?= number_format($item_total, 2) ?>
                             </td>
 
                             <td>
@@ -232,14 +256,32 @@ $cart_items = get_user_cart_ctr($customer_id ?? $ip_add);
                 </table>
             </div>
 
-            <div class="row mt-4 mb-4 align-items-center">
-                <div class="col-md-6"></div>
-                <div class="col-md-6 text-end">
-                    <div class="p-3 bg-light rounded d-inline-block border" style="min-width: 250px">
-                        <span class="text-muted">Total Cost:</span>
-                        <h3 class="mb-0 fw-bold" style="color: #c453eaff;">
-                            GH₵ <?= number_format($total_amount, 2) ?>
-                        </h3>
+            <?php
+                // Math Calculations
+                $tax = 5.00; // Fixed Tax
+                $service_fee = $subtotal * 0.015; // 1.5% Service Fee
+                $grand_total = $subtotal + $tax + $service_fee;
+            ?>
+
+            <div class="row mt-4 mb-4 justify-content-end">
+                <div class="col-md-5">
+                    <div class="summary-box">
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span class="fw-bold">GH₵ <?= number_format($subtotal, 2) ?></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Processing Tax (Fixed):</span>
+                            <span>GH₵ <?= number_format($tax, 2) ?></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Service Fee (1.5%):</span>
+                            <span>GH₵ <?= number_format($service_fee, 2) ?></span>
+                        </div>
+                        <div class="summary-total">
+                            <span>Grand Total:</span>
+                            <span>GH₵ <?= number_format($grand_total, 2) ?></span>
+                        </div>
                     </div>
                 </div>
             </div>

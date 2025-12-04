@@ -5,6 +5,7 @@ header('Content-Type: application/json');
 // Include core and Paystack configuration
 require_once '../settings/core.php';
 require_once '../settings/paystack_config.php';
+require_once '../controllers/cart_controller.php'; // Required to fetch cart
 
 error_log("=== PAYSTACK INITIALIZE TRANSACTION ===");
 
@@ -17,27 +18,10 @@ if (!checkLogin()) {
     exit();
 }
 
-// Get POST data
+// Get Customer ID
+$customer_id = getUserId();
 $input = json_decode(file_get_contents('php://input'), true);
-$amount = isset($input['amount']) ? floatval($input['amount']) : 0;
 $customer_email = isset($input['email']) ? trim($input['email']) : '';
-
-if (!$amount || !$customer_email) {
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Invalid amount or email'
-    ]);
-    exit();
-}
-
-// Validate amount
-if ($amount <= 0) {
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Amount must be greater than 0'
-    ]);
-    exit();
-}
 
 // Validate email
 if (!filter_var($customer_email, FILTER_VALIDATE_EMAIL)) {
@@ -48,15 +32,40 @@ if (!filter_var($customer_email, FILTER_VALIDATE_EMAIL)) {
     exit();
 }
 
+// === RECALCULATE AMOUNT SERVER-SIDE (SECURITY) ===
+// 1. Fetch items
+$cart_items = get_user_cart_ctr($customer_id);
+
+if (!$cart_items || count($cart_items) == 0) {
+    echo json_encode(['status' => 'error', 'message' => 'Cart is empty']);
+    exit();
+}
+
+// 2. Calculate Subtotal
+$subtotal = 0;
+foreach ($cart_items as $item) {
+    $subtotal += ($item['product_price'] * $item['qty']);
+}
+
+// 3. Apply Tax and Service Fee
+$tax = 5.00;
+$service_fee = $subtotal * 0.015;
+$amount_to_charge = $subtotal + $tax + $service_fee;
+
+// Ensure amount is valid
+if ($amount_to_charge <= 0) {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid amount']);
+    exit();
+}
+
 try {
     // Generate unique reference
-    $customer_id = getUserId();
     $reference = 'GBVAid-' . $customer_id . '-' . time();
     
-    error_log("Initializing transaction - Customer: $customer_id, Amount: $amount GHS, Email: $customer_email");
+    error_log("Initializing transaction - Customer: $customer_id, Amount: $amount_to_charge GHS, Email: $customer_email");
     
     // Initialize Paystack transaction
-    $paystack_response = paystack_initialize_transaction($amount, $customer_email, $reference);
+    $paystack_response = paystack_initialize_transaction($amount_to_charge, $customer_email, $reference);
     
     if (!$paystack_response) {
         throw new Exception("No response from Paystack API");
@@ -65,7 +74,7 @@ try {
     if (isset($paystack_response['status']) && $paystack_response['status'] === true) {
         // Store transaction reference in session for verification later
         $_SESSION['paystack_ref'] = $reference;
-        $_SESSION['paystack_amount'] = $amount;
+        $_SESSION['paystack_amount'] = $amount_to_charge;
         $_SESSION['paystack_timestamp'] = time();
         
         error_log("Paystack transaction initialized successfully - Reference: $reference");

@@ -11,6 +11,16 @@ if (!$cart_items || count($cart_items) == 0) {
     header('Location: cart.php');
     exit();
 }
+
+// Calculate Totals (Must match cart.php logic)
+$subtotal = 0;
+foreach ($cart_items as $item) {
+    $subtotal += ($item['product_price'] * $item['qty']);
+}
+
+$tax = 5.00; // Fixed Tax
+$service_fee = $subtotal * 0.015; // 1.5% Service Fee
+$grand_total = $subtotal + $tax + $service_fee;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -89,17 +99,33 @@ if (!$cart_items || count($cart_items) == 0) {
             border: 1px solid #e598ffff;
             border-radius: 10px;
             padding: 20px;
-            text-align: right;
             margin: 30px 0; 
         }
         
-        .total-label {
-            font-size: 16px;
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
             color: #555;
+            font-size: 0.95rem;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #d1a3e2;
+            padding-top: 15px;
+            margin-top: 10px;
+        }
+
+        .total-label {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
         }
         
         .total-amount {
-            font-size: 32px; 
+            font-size: 24px; 
             font-weight: 800; 
             color: #c453eaff; 
         }
@@ -190,9 +216,26 @@ if (!$cart_items || count($cart_items) == 0) {
             </div>
             
             <div class="summary-total-container">
-                <span class="total-label">Total Cost:</span><br>
-                <span id="checkoutTotal" class="total-amount">GH₵ 0.00</span>
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span class="fw-bold">GH₵ <?= number_format($subtotal, 2) ?></span>
+                </div>
+                <div class="summary-row">
+                    <span>Processing Tax (Fixed):</span>
+                    <span>GH₵ <?= number_format($tax, 2) ?></span>
+                </div>
+                <div class="summary-row">
+                    <span>Service Fee (1.5%):</span>
+                    <span>GH₵ <?= number_format($service_fee, 2) ?></span>
+                </div>
+                
+                <div class="total-row">
+                    <span class="total-label">Total to Pay:</span>
+                    <span id="checkoutTotal" class="total-amount">GH₵ <?= number_format($grand_total, 2) ?></span>
+                </div>
             </div>
+            
+            <script>window.grandTotal = "<?= number_format($grand_total, 2, '.', '') ?>";</script>
             
             <button onclick="showPaymentModal()" class="btn btn-purple btn-lg">
                 <i class="bi bi-shield-lock-fill me-2"></i> Confirm & Secure Booking
@@ -210,7 +253,8 @@ if (!$cart_items || count($cart_items) == 0) {
                 <div class="modal-body p-4">
                     <div class="text-center mb-4">
                         <small class="text-muted">TOTAL COST</small>
-                        <div id="paymentAmount" style="font-size: 36px; font-weight: 800; color: #c453eaff;"></div>
+                        <div id="paymentAmount" style="font-size: 36px; font-weight: 800; color: #c453eaff;">
+                            </div>
                     </div>
                     
                     <div class="secure-badge">
@@ -289,11 +333,14 @@ if (!$cart_items || count($cart_items) == 0) {
 
         // Override to use Bootstrap
         window.showPaymentModal = function() {
-            // Update amount text first (logic from original JS)
+            // Use the PHP-calculated total to prevent JS errors
             const amountDisplay = document.getElementById('paymentAmount');
             if (amountDisplay) {
-                amountDisplay.textContent = `GH₵ ${window.checkoutTotal || '0.00'}`;
+                amountDisplay.textContent = `GH₵ ${window.grandTotal}`;
             }
+            // Update the global total for the JS processing script
+            window.checkoutTotal = window.grandTotal;
+            
             paymentModalBS.show();
         };
 

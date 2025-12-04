@@ -1,5 +1,6 @@
 # CakePHP 3
 uploads/product
+uploads/users
 /settings
 
 /vendor/*
