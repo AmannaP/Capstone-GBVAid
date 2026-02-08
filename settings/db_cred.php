@@ -21,6 +21,6 @@ if (!defined("DB_PASSWORD")) {
 }
 
 if (!defined("DB_NAME")) {
-    define("DB_NAME", "dbforlab");
+    define("DB_NAME", "gbvaid");
 }
 ?>
