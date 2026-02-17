@@ -25,5 +25,4 @@
 /app/Config/core.php
 /app/Config/database.php
 /vendors/*
-
-# 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
+.env
