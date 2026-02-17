@@ -17,7 +17,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: '../actions/login_customer_action.php',
+            url: '../actions/login_victim_action.php',
             type: 'POST',
             dataType: 'json',
             data: {
@@ -38,7 +38,7 @@ $(document).ready(function () {
                                 // Admin
                                 window.location.href = '../admin/dashboard.php';
                             } else {
-                                // Regular customer
+                                // Regular victim
                                 window.location.href = '../user/dashboard.php';
                             }
                         }

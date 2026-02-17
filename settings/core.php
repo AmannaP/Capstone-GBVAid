@@ -16,6 +16,7 @@ if (session_status() === PHP_SESSION_NONE) {
 // For header redirection
 ob_start();
 
+
 /**
  * Redirect user to login page if not logged in
  * @return bool

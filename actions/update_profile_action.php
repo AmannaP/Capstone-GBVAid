@@ -1,7 +1,7 @@
 <?php
 // actions/update_profile_action.php
 session_start();
-require_once '../controllers/customer_controller.php';
+require_once '../controllers/victim_controller.php';
 
 header('Content-Type: application/json');
 
@@ -10,6 +10,7 @@ if (!isset($_SESSION['id'])) {
     exit();
 }
 
+// Get form data
 $user_id = $_SESSION['id'];
 $name = $_POST['full_name'] ?? '';
 $contact = $_POST['phone_number'] ?? '';
@@ -52,7 +53,7 @@ if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === 0) 
 }
 
 // Update Database
-$result = update_customer_ctr($user_id, $name, $contact, $city, $country, $image_name);
+$result = update_victim_ctr($user_id, $name, $contact, $city, $country, $image_name);
 if ($result) {
     // 1. Update Name in Session
     $_SESSION['name'] = $name; 

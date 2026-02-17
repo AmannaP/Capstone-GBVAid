@@ -5,6 +5,7 @@ require_once 'db_cred.php';
 
 /**
  *@version 1.1
+ * Database connection class using PDO
  */
 if (!class_exists('db_conn')) {
     class db_conn

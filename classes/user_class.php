@@ -28,7 +28,7 @@ class User extends db_conn
         if (!$this->user_id) return false;
 
         // 2. FIX: PDO Syntax (No bind_param)
-        $sql = "SELECT * FROM customer WHERE customer_id = ?";
+        $sql = "SELECT * FROM victim WHERE victim_id = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$this->user_id]);
         
@@ -36,11 +36,11 @@ class User extends db_conn
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($result) {
-            $this->name = $result['customer_name'];
-            $this->email = $result['customer_email'];
+            $this->name = $result['victim_name'];
+            $this->email = $result['victim_email'];
             $this->role = $result['user_role'];
             $this->date_created = isset($result['date_created']) ? $result['date_created'] : null;
-            $this->phone_number = $result['customer_contact'];
+            $this->phone_number = $result['victim_contact'];
         }
     }
 
@@ -52,12 +52,12 @@ class User extends db_conn
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         
         // 4. FIX: PDO Insert Logic
-        $sql = "INSERT INTO customer (customer_name, customer_email, customer_pass, customer_country, customer_city, customer_contact, user_role) 
+        $sql = "INSERT INTO victim (victim_name, victim_email, victim_pass, victim_country, victim_city, victim_contact, user_role) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $this->db->prepare($sql);
         
-        // Execute with array of values
+        // 5. FIX: Execute with array of values
         if ($stmt->execute([$name, $email, $hashed_password, $country, $city, $phone_number, $role])) {
             // 5. FIX: PDO Last Insert ID
             return $this->db->lastInsertId();
@@ -66,11 +66,12 @@ class User extends db_conn
         return false;
     }
 
+    // 6. FIX: Get user by email for login
     public function getUserByEmail($email)
     {
         if (!$this->db_connect()) return false;
 
-        $sql = "SELECT * FROM customer WHERE customer_email = ?";
+        $sql = "SELECT * FROM victim WHERE victim_email = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$email]);
         

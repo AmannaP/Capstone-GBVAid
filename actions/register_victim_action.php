@@ -41,7 +41,7 @@ try {
     if ($user_id) {
         $response['status'] = 'success';
         $response['message'] = 'Registered successfully';
-        $response['customer_id'] = $user_id;
+        $response['victim_id'] = $user_id;
     } else {
         $response['status'] = 'error';
         $response['message'] = 'Failed to register. Email might already exist.';

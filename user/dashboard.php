@@ -16,7 +16,10 @@ require_once '../settings/core.php';
     <title>Dashboard | GBVAid Support Platform</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<style>
         body {
             background-color: #0f0a1e; /* Consistent deep purple base */
             font-family: 'Poppins', sans-serif;
@@ -108,6 +111,43 @@ require_once '../settings/core.php';
             padding: 40px 0;
             background: rgba(10, 7, 20, 0.8);
         }
+
+        .emergency-btn {
+            background: linear-gradient(45deg, #ff0000, #990000);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .emergency-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.7);
+            background: linear-gradient(45deg, #ff3333, #bb0000);
+        }
+
+        .emergency-btn:active {
+            transform: scale(0.95);
+        }
+
+        .emergency-btn:disabled {
+            background: #4a4a4a;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .emergency-zone {
+            padding: 30px;
+            background: rgba(255, 0, 0, 0.05);
+            border: 1px dashed rgba(255, 77, 77, 0.3);
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -135,7 +175,9 @@ if (file_exists('../includes/navbar.php')) {
         <div class="emergency-zone text-center animate__animated animate__pulse">
         <h4 class="text-danger fw-bold mb-3"><i class="bi bi-geo-alt-fill"></i> Active Incident Response</h4>
         <p class="small text-light opacity-75 mb-4">Clicking the button below notifies the nearest police station with your live location and audio stream.</p>
-        <button class="emergency-btn"><i class="bi bi-broadcast"></i> TRIGGER SOS SIGNAL</button>
+        <button id="sosButton" class="emergency-btn">
+            <i class="bi bi-broadcast"></i> TRIGGER SOS SIGNAL
+        </button>
     </div>
 
         <div class="col-md-4">
@@ -172,10 +214,9 @@ if (file_exists('../includes/navbar.php')) {
                     <div class="icon-circle mx-auto">
                         <i class="bi bi-shield-check"></i>
                     </div>
-                    <h5 class="fw-bold card-title">Safety Resources</h5>
-                    <p class="text-muted-custom small mb-4">Access tailored safety plans, legal rights information, and emergency contacts.</p>
-                    <a href="#" class="btn btn-action">Service Coming Soon...</a>
-                    <!-- <a href="resources.php" class="btn btn-action">View Resources</a> -->
+                    <h5 class="fw-bold card-title">Safety Services</h5>
+                    <p class="text-muted-custom small mb-4">Access counseling, legal and medical consultations with professionals.</p>
+                    <a href="service_page.php" class="btn btn-action">Browse Services</a>
                 </div>
             </div>
         </div>
@@ -186,10 +227,10 @@ if (file_exists('../includes/navbar.php')) {
                     <div class="icon-circle mx-auto">
                         <i class="bi bi-box2-heart-fill"></i>
                     </div>
-                    <h5 class="fw-bold card-title">Support & Tools</h5>
-                    <p class="text-muted-custom small mb-4">Browse legal aid, medical kits, and safety devices available for your protection.</p>
+                    <h5 class="fw-bold card-title">Tips & Helpful Tools</h5>
+                    <p class="text-muted-custom small mb-4">Access GBV survival, medical and legal tips available for your recovery and safety.</p>
                     <a href="#" class="btn btn-action">Service Coming Soon...</a>
-                    <!-- <a href="product_page.php" class="btn btn-action">Browse Services</a> -->
+                    <!-- <a href="resources.php" class="btn btn-action">View Resources</a> -->
                 </div>
             </div>
         </div>
@@ -202,22 +243,7 @@ if (file_exists('../includes/navbar.php')) {
                     </div>
                     <h5 class="fw-bold card-title">AI Safety Room</h5>
                     <p class="text-muted-custom small mb-4">Talk to an AI listener without judgment or fear.</p>
-                    <a href="#" class="btn btn-action">Service Coming Soon...</a>
-                    <!-- <a href="profile.php" class="btn btn-action">Manage Profile</a> -->
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card card-hover p-4">
-                <div class="text-center">
-                    <div class="icon-circle mx-auto">
-                        <i class="bi bi-person-lines-fill"></i>
-                    </div>
-                    <h5 class="fw-bold card-title">My Profile</h5>
-                    <p class="text-muted-custom small mb-4">Manage your personal details, view your history, and update privacy settings.</p>
-                    <a href="#" class="btn btn-action">Service Coming Soon...</a>
-                    <!-- <a href="profile.php" class="btn btn-action">Manage Profile</a> -->
+                    <a href="ai_chat.php" class="btn btn-action">Talk to AI</a>
                 </div>
             </div>
         </div>
@@ -246,5 +272,7 @@ if (file_exists('../includes/navbar.php')) {
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/sos_handler.js"></script>
+
 </body>
 </html>

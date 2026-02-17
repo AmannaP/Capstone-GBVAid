@@ -1,6 +1,6 @@
 <?php
 require_once '../settings/core.php';
-require_once '../controllers/customer_controller.php';
+require_once '../controllers/victim_controller.php';
 
 if (!checkLogin()) {
     header("Location: ../login/login.php");
@@ -8,12 +8,12 @@ if (!checkLogin()) {
 }
 
 // Fetch fresh user data
-$user = get_customer_ctr($_SESSION['id']);
+$user = get_victim_ctr($_SESSION['id']);
 
 // Determine Profile Image
-$profile_pic = !empty($user['customer_image']) 
-    ? "../uploads/users/" . $user['customer_image'] 
-    : "https://ui-avatars.com/api/?name=" . urlencode($user['customer_name']) . "&background=c453ea&color=fff";
+$profile_pic = !empty($user['victim_image']) 
+    ? "../uploads/users/" . $user['victim_image'] 
+    : "https://ui-avatars.com/api/?name=" . urlencode($user['victim_name']) . "&background=c453ea&color=fff";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -84,23 +84,23 @@ $profile_pic = !empty($user['customer_image'])
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Full Name</label>
-                            <input type="text" name="full_name" class="form-control" value="<?= htmlspecialchars($user['customer_name']) ?>" required>
+                            <input type="text" name="full_name" class="form-control" value="<?= htmlspecialchars($user['victim_name']) ?>" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Email Address</label>
-                            <input type="email" class="form-control bg-light" value="<?= htmlspecialchars($user['customer_email']) ?>" readonly>
+                            <input type="email" class="form-control bg-light" value="<?= htmlspecialchars($user['victim_email']) ?>" readonly>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Phone Number</label>
-                            <input type="text" name="phone_number" class="form-control" value="<?= htmlspecialchars($user['customer_contact']) ?>" required>
+                            <input type="text" name="phone_number" class="form-control" value="<?= htmlspecialchars($user['victim_contact']) ?>" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">City</label>
-                            <input type="text" name="city" class="form-control" value="<?= htmlspecialchars($user['customer_city']) ?>">
+                            <input type="text" name="city" class="form-control" value="<?= htmlspecialchars($user['victim_city']) ?>">
                         </div>
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Country</label>
-                            <input type="text" name="country" class="form-control" value="<?= htmlspecialchars($user['customer_country']) ?>">
+                            <input type="text" name="country" class="form-control" value="<?= htmlspecialchars($user['victim_country']) ?>">
                         </div>
                     </div>
                     

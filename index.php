@@ -169,8 +169,8 @@
             <div class="col-md-4">
                 <div class="feature-card">
                     <span class="icon-box">📞</span>
-                    <h4 class="feature-title">24/7 Support Lines</h4>
-                    <p class="feature-text">Connect instantly with trained responders who provide real-time guidance and care, any time you need it.</p>
+                    <h4 class="feature-title">Reliable Support Lines</h4>
+                    <p class="feature-text">Connect with trained responders who provide reliable guidance and care, any time you need it.</p>
                 </div>
             </div>
             <div class="col-md-4">

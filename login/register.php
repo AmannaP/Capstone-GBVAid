@@ -196,8 +196,8 @@
                                 <label class="form-label d-block">Register As</label>
                                 <div class="d-flex p-2" style="background: #0f0a1e; border-radius: 10px; border: 1px solid #3c2a61;">
                                     <div class="form-check me-4">
-                                        <input class="form-check-input" type="radio" name="role" id="customer" value="1" checked>
-                                        <label class="form-check-label" for="customer">Survivor/User</label>
+                                        <input class="form-check-input" type="radio" name="role" id="victim" value="1" checked>
+                                        <label class="form-check-label" for="victim">Survivor/User</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="role" id="owner" value="2">

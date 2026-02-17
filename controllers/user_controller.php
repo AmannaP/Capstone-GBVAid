@@ -14,6 +14,7 @@ function register_user_ctr($name, $email, $password, $country, $city, $phone_num
     return false;
 }
 
+// Get user by email (for login)
 function get_user_by_email_ctr($email)
 {
     $user = new User();

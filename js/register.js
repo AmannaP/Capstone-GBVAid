@@ -1,5 +1,4 @@
 // js/register.js
-
 $(document).ready(function() {
     $('#register-form').submit(function(e) {
         e.preventDefault();
@@ -31,7 +30,7 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: '../actions/register_user_action.php',
+            url: '../actions/register_victim_action.php',
             type: 'POST',
             dataType: 'json',
             data: {
