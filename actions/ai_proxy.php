@@ -17,7 +17,7 @@ if (empty($userMessage)) {
 }
 
 // My OpenAI API Key 
-$apiKey = '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';
+$apiKey = getenv('API_KEY');
 
 // Define the AI's "Personality" (System Prompt)
 $systemPrompt = "You are an empathetic AI listener for GBVAid, supporting survivors in Ghana. 
