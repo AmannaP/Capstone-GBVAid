@@ -1,31 +1,30 @@
 <?php
-// actions/update_brand_action.php
-
+// actions/update_category_action.php
 require_once '../settings/core.php';
-require_once '../controllers/brand_controller.php';
+require_once '../controllers/category_controller.php';
 
 header('Content-Type: application/json');
 
-// Ensure user is logged in
 if (!checkLogin()) {
-    echo json_encode(["status" => "error", "message" => "Unauthorized access."]);
+    echo json_encode(["status" => "error", "message" => "Unauthorized"]);
     exit;
 }
 
-// Sanitize inputs
-$brand_id = isset($_POST['brand_id']) ? intval($_POST['brand_id']) : 0;
-$brand_name = isset($_POST['brand_name']) ? trim($_POST['brand_name']) : '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $cat_id = $_POST['cat_id'] ?? null;
+    $new_name = trim($_POST['new_name'] ?? '');
 
-if ($brand_id <= 0 || empty($brand_name)) {
-    echo json_encode(["status" => "error", "message" => "Please provide valid brand details to update."]);
-    exit;
-}
+    if (!$cat_id || empty($new_name)) {
+        echo json_encode(["status" => "error", "message" => "Category ID and new name required"]);
+        exit;
+    }
 
-try {
-    $result = update_brand_ctr($brand_id, $brand_name);
-    echo json_encode($result);
-} catch (Exception $e) {
-    echo json_encode(["status" => "error", "message" => "Server error: " . $e->getMessage()]);
+    $user_id = $_SESSION['id'];
+    $result = update_category_ctr($cat_id, $new_name, $user_id);
+
+    if ($result) {
+        echo json_encode(["status" => "success", "message" => "Category updated successfully"]);
+    } else {
+        echo json_encode(["status" => "error", "message" => "Failed to update category"]);
+    }
 }
-exit;
-?>

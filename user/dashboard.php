@@ -188,8 +188,7 @@ if (file_exists('../includes/navbar.php')) {
                     </div>
                     <h5 class="fw-bold card-title">Report an Incident</h5>
                     <p class="text-muted-custom small mb-4">If you or someone you know has experienced violence, report it securely and confidentially.</p>
-                    <a href="#" class="btn btn-action">Service Coming Soon...</a>
-                    <!-- <a href="report_incident.php" class="btn btn-action">Report Now</a> -->
+                    <a href="report_incident.php" class="btn btn-action">Report Now</a>
                 </div>
             </div>
         </div>
@@ -202,8 +201,8 @@ if (file_exists('../includes/navbar.php')) {
                     </div>
                     <h5 class="fw-bold card-title">Community Space</h5>
                     <p class="text-muted-custom small mb-4">Connect with other victims/survivors with similar cases for survival tips and empathy.</p>
-                    <a href="#" class="btn btn-action">Service Coming Soon...</a>
-                    <!-- <a href="chat.php" class="btn btn-action">Start Chat</a> -->
+                    <!-- <a href="#" class="btn btn-action">Service Coming Soon...</a> -->
+                    <a href="chat.php" class="btn btn-action">Start Chat</a>
                 </div>
             </div>
         </div>
@@ -229,8 +228,8 @@ if (file_exists('../includes/navbar.php')) {
                     </div>
                     <h5 class="fw-bold card-title">Tips & Helpful Tools</h5>
                     <p class="text-muted-custom small mb-4">Access GBV survival, medical and legal tips available for your recovery and safety.</p>
-                    <a href="#" class="btn btn-action">Service Coming Soon...</a>
-                    <!-- <a href="resources.php" class="btn btn-action">View Resources</a> -->
+                    <!-- <a href="#" class="btn btn-action">Service Coming Soon...</a> -->
+                    <a href="resources.php" class="btn btn-action">View Resources</a>
                 </div>
             </div>
         </div>
