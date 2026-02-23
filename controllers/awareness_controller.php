@@ -16,4 +16,11 @@ function delete_awareness_ctr($id) {
     $awareness = new Awareness();
     return $awareness->delete_awareness($id);
 }
+
+function update_awareness_ctr($id, $title, $content) {
+    // Correct the class name if it's different in your project
+    $awareness_instance = new Awareness(); 
+    return $awareness_instance->update_awareness($id, $title, $content);
+}
+
 ?>

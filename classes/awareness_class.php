@@ -31,5 +31,15 @@ class Awareness extends db_conn {
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$id]);
     }
+
+    // Update content
+    public function update_awareness($id, $title, $content) {
+        if (!$this->db_connect()) return false;
+        
+        $sql = "UPDATE awareness SET title = ?, content = ? WHERE awareness_id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$title, $content, $id]);
+    }
+     
 }
 ?>

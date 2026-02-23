@@ -1,5 +1,7 @@
 <?php
 require_once '../settings/core.php';
+require_once '../controllers/chat_controller.php';
+
 
 // Restrict access to admins only
 requireAdmin();
@@ -238,6 +240,26 @@ requireAdmin();
         </div>
 
         <div class="row g-4 justify-content-center">
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-card position-relative">
+                    <div class="card-icon"><i class="bi bi-person-plus-fill"></i></div>
+                    <h5>Group Requests</h5>
+                    <p>Review new chat group suggestions from community members.</p>
+                    
+                    <?php 
+                        $pending_count = count(get_pending_requests_ctr()); 
+                        if($pending_count > 0): 
+                    ?>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <?= $pending_count ?> New
+                        </span>
+                    <?php endif; ?>
+
+                    <a href="../admin/manage_requests.php" class="btn-purple">Review Requests</a>
+                </div>
+            </div>
+
             <div class="col-md-6 col-lg-4">
                 <div class="dashboard-card">
                     <div class="card-icon"><i class="bi bi-box-seam"></i></div>
@@ -296,5 +318,19 @@ requireAdmin();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/admin_sos.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('msg') && urlParams.get('msg') === 'approved') {
+            Swal.fire({
+                title: 'Success!',
+                text: 'The group has been created and the request approved.',
+                icon: 'success',
+                background: '#1a1033',
+                color: '#ffffff',
+                confirmButtonColor: '#9d4edd',
+                customClass: { popup: 'neon-border' }
+            });
+        }
+    </script>
 </body>
 </html>

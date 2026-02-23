@@ -22,10 +22,17 @@ $keywords = isset($_POST['service_keywords']) ? trim($_POST['service_keywords'])
 $upload_dir = "../uploads/services/";
 $default_image = "default.jpg";
 
+
+if (!is_dir($upload_dir)) {
+    mkdir($upload_dir, 0777, true);
+}
+
 if ($service_id <= 0 || $cat_id <= 0 || $brand_id <= 0 || empty($title) || $price === '') {
     echo json_encode(["status" => "error", "message" => "Please provide valid service details."]);
     exit;
 }
+
+$service_image = $default_image;
 // Handle new image upload
 if (isset($_FILES['service_image']) && $_FILES['service_image']['error'] === UPLOAD_ERR_OK) {
     $file_tmp = $_FILES['service_image']['tmp_name'];
@@ -36,8 +43,11 @@ if (isset($_FILES['service_image']) && $_FILES['service_image']['error'] === UPL
     $ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
     if (in_array($ext, $allowed)) {
+        $new_file_name = time() . "_" . $file_name;
+        $target_path = $upload_dir . $new_file_name;
+
         if (move_uploaded_file($file_tmp, $target_path)) {
-            $service_image = $file_name;
+            $service_image = $new_file_name;
         } else {
             $service_image = $default_image;
         }

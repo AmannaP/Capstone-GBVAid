@@ -11,8 +11,8 @@ $messages = get_messages_ctr($gid);
 
 // Loop through messages and create HTML for each
 foreach ($messages as $msg) {
-    $is_me = ($msg['user_id'] == $current_user_id) ? 'sent' : 'received';
-    $name = ($is_me == 'sent') ? 'You' : htmlspecialchars($msg['customer_name']);
+    $is_me = ($msg['victim_id'] == $current_user_id) ? 'sent' : 'received';
+    $name = ($is_me == 'sent') ? 'You' : htmlspecialchars($msg['victim_name']);
     $time = date('h:i A', strtotime($msg['created_at']));
     $text = htmlspecialchars($msg['message']);
 

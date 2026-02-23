@@ -5,180 +5,184 @@
     <title>Venting Room | GBVAid</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <style>
-        .venting-room {
-            background: radial-gradient(circle at center, #1a1033 0%, #0f0a1e 100%);
-            min-height: 100vh;
+        /* Force the body to be exactly the height of the screen and not scroll */
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background-color: #0f0a1e;
+            font-family: 'Poppins', sans-serif;
         }
 
-        .chat-container {
-            border: 1px solid rgba(138, 43, 226, 0.3);
-            box-shadow: 0 0 20px rgba(138, 43, 226, 0.1);
-            transition: box-shadow 0.5s ease-in-out;
-            background: rgba(26, 16, 51, 0.9);
-            border-radius: 20px;
-            overflow-y: auto;
+        /* Main layout container */
+        .venting-room {
             display: flex;
             flex-direction: column;
+            height: 100vh;
+            background: radial-gradient(circle at center, #1a1033 0%, #0f0a1e 100%);
         }
 
-        /* Container to handle the floats properly */
-        .msg-wrapper {
-            width: 100%;
-            clear: both;
-            display: block;
-            margin-bottom: 5px;
+        /* Top Section: Header and Chat Area */
+        .chat-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow: hidden; /* Important: keeps the container from expanding */
         }
+
+        .header-section {
+            flex-shrink: 0;
+            padding-bottom: 15px;
+        }
+
+        /* The Scrollable Chat Window */
+        .chat-container {
+            flex: 1;
+            min-height: 0; /* Critical fix for flexbox scrolling */
+            background: rgba(26, 16, 51, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            border-radius: 25px;
+            overflow-y: auto;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: #3c2a61 transparent;
+        }
+
+        /* Custom Scrollbar */
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #3c2a61;
+            border-radius: 10px;
+        }
+
+        /* Message Bubbles */
+        .msg-wrapper { width: 100%; clear: both; display: block; margin-bottom: 10px; }
 
         .user-msg-bubble {
-            background: #3c2a61;
+            background: linear-gradient(135deg, #9d4edd 0%, #c453ea 100%);
             color: white;
-            border-radius: 15px 15px 0 15px;
-            padding: 10px 15px;
+            border-radius: 20px 20px 0 20px;
+            padding: 12px 18px;
             float: right;
             max-width: 80%;
+            box-shadow: 0 4px 15px rgba(157, 78, 221, 0.3);
             word-wrap: break-word;
         }
 
         .ai-msg-bubble {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #e0e0e0;
-            border-radius: 15px 15px 15px 0;
-            padding: 10px 15px;
+            color: #e0aaff;
+            border-radius: 20px 20px 20px 0;
+            padding: 12px 18px;
             float: left;
             max-width: 80%;
+            backdrop-filter: blur(5px);
             word-wrap: break-word;
         }
 
+        /* Typing Indicator Animation */
         .typing-glow {
             animation: pulse-glow 2s infinite;
-            color: #8a2be2;
+            color: #bf40ff;
             font-style: italic;
             font-size: 0.85rem;
             clear: both;
+            margin-top: 10px;
         }
 
         @keyframes pulse-glow {
             0% { opacity: 0.4; }
-            50% { opacity: 1; text-shadow: 0 0 10px #8a2be2; }
+            50% { opacity: 1; text-shadow: 0 0 10px #bf40ff; }
             100% { opacity: 0.4; }
         }
 
-        /* Toggle Switch Styling */
-        .form-check-input:checked {
-            background-color: #8a2be2;
-            border-color: #8a2be2;
+        /* Bright Fixed Input Area */
+        .input-area-bright {
+            background: #ffffff;
+            padding: 20px 30px;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
+            flex-shrink: 0; /* Prevents input area from squishing */
         }
-        .text-white-custom { color: rgba(255,255,255,0.7); }
+
+        #user-input {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            color: #212529;
+            border-radius: 50px;
+            padding: 12px 20px;
+        }
+
+        #user-input:focus {
+            box-shadow: none;
+            border-color: #9d4edd;
+        }
+
+        .form-check-input:checked {
+            background-color: #9d4edd;
+            border-color: #9d4edd;
+        }
     </style>
 </head>
-<body class="venting-room">
-    <div class="container p-4">
-        <div class="monitor-container mx-auto" style="max-width: 800px;">
-            <div class="d-flex justify-content-between align-items-center mb-2">
+<body>
+
+<div class="venting-room">
+    <div class="chat-wrapper">
+        <div class="container-fluid d-flex flex-column h-100" style="max-width: 900px;">
+            
+            <div class="header-section d-flex justify-content-between align-items-center">
                 <div>
-                    <h3 class="text-danger fw-bold m-0"><i class="bi bi-heart-pulse"></i> Safe Space Venting</h3>
-                    <p class="text-white-custom small mb-0">This is a judgment-free zone. Your words stay here.</p>
+                    <h3 class="text-white fw-bold m-0">
+                        <i class="bi bi-heart-pulse-fill text-danger"></i> Safe Space Venting
+                    </h3>
+                    <p class="text-white-50 small mb-0">Your words stay here. This is your safe haven.</p>
                 </div>
                 <div class="form-check form-switch text-white">
                     <input class="form-check-input" type="checkbox" id="silenceToggle">
-                    <label class="form-check-label small" for="silenceToggle">Silence AI (One-Way Vent)</label>
+                    <label class="form-check-label small" for="silenceToggle">Silence AI</label>
                 </div>
             </div>
             
-            <div id="chat-window" class="chat-container p-3 mb-3" style="height: 450px;">
+            <div id="chat-window" class="chat-container">
                 <div class="msg-wrapper">
                     <div class="ai-msg-bubble">
-                        Hello. I am your GBVAid listener. Whether you want to talk about your day, vent your frustrations, or ask about resources like DOVVSU, I am here.
+                        Hello. I am your GBVAid listener. This is a judgment-free zone. Whether you want to talk about your day, vent your frustrations, or ask about resources, I am here.
                     </div>
                 </div>
             </div>
 
-            <div class="input-group">
-                <input type="text" id="user-input" class="form-control bg-transparent text-white border-purple" placeholder="Type your heart out...">
-                <button class="btn btn-danger px-4" id="send-btn">
-                    <i class="bi bi-send-fill"></i>
-                </button>
-            </div>
         </div>
     </div>
 
-<script>
-$(document).ready(function() {
-    const chatWindow = $('#chat-window');
-
-    function scrollToBottom() {
-        chatWindow.animate({ scrollTop: chatWindow[0].scrollHeight }, 500);
-    }
-
-    function sendMessage() {
-        const message = $('#user-input').val().trim();
-        const isSilenced = $('#silenceToggle').is(':checked');
-
-        if (message === "") return;
-
-        // Append User Message
-        chatWindow.append(`
-            <div class="msg-wrapper">
-                <div class="user-msg-bubble">${message}</div>
+    <div class="input-area-bright">
+        <div class="container" style="max-width: 850px;">
+            <div class="input-group">
+                <input type="text" id="user-input" class="form-control" placeholder="Type your heart out..." autocomplete="off">
+                <button class="btn btn-danger px-4 rounded-pill ms-2" id="send-btn" style="background: #9d4edd; border: none;">
+                    <i class="bi bi-send-fill"></i>
+                </button>
             </div>
-        `);
-        
-        $('#user-input').val('');
-        scrollToBottom();
+            <div class="text-center mt-2">
+                <small class="text-muted" style="font-size: 0.7rem;">Your venting data is encrypted and private.</small>
+            </div>
+        </div>
+    </div>
+</div>
 
-        // Check if we should call the AI or just log it
-        if (isSilenced) {
-            // Option: You can still send it to proxy just for logging, 
-            // but tell the proxy NOT to return a response or just ignore it here.
-            $.post('../actions/ai_proxy.php', JSON.stringify({ message: message, silent: true }));
-            
-            // Show a small quiet indicator
-            chatWindow.append(`<div class="msg-wrapper text-center my-2"><small class="text-white-50 italic">Message saved silently...</small></div>`);
-            scrollToBottom();
-        } else {
-            // Normal AI interaction
-            const loadingId = 'loading-' + Date.now();
-            chatWindow.append(`
-                <div class="msg-wrapper" id="${loadingId}">
-                    <div class="typing-glow">AI Listener is reflecting...</div>
-                </div>
-            `);
-            scrollToBottom();
+<script src="../js/ai_chat.js"></script>
 
-            $.ajax({
-                url: '../actions/ai_proxy.php',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ message: message }),
-                success: function(response) {
-                    $(`#${loadingId}`).remove();
-                    // Assuming your proxy returns { reply: "text" }
-                    const aiReply = response.reply || "I'm listening. Please continue.";
-                    
-                    chatWindow.append(`
-                        <div class="msg-wrapper">
-                            <div class="ai-msg-bubble">${aiReply}</div>
-                        </div>
-                    `);
-                    scrollToBottom();
-                },
-                error: function() {
-                    $(`#${loadingId}`).remove();
-                    chatWindow.append(`<div class="msg-wrapper"><div class="ai-msg-bubble">I'm having trouble connecting, but I'm still here for you.</div></div>`);
-                }
-            });
-        }
-    }
-
-    $('#send-btn').on('click', sendMessage);
-    $('#user-input').on('keypress', function(e) {
-        if (e.which == 13) sendMessage();
-    });
-});
-</script>
 </body>
 </html>

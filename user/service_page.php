@@ -36,7 +36,7 @@ $brands = fetch_brands_ctr();
         .service-card {
             border: 1px solid #3c2a61;
             border-radius: 20px;
-            background: rgba(26, 16, 51, 0.9);
+            background: rgba(26, 16, 51, 0.95); /* Slightly darker for contrast */
             backdrop-filter: blur(10px);
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
             height: 100%;
@@ -46,38 +46,42 @@ $brands = fetch_brands_ctr();
         .service-card:hover {
             transform: translateY(-8px);
             border-color: #bf40ff;
-            box-shadow: 0 12px 25px rgba(191, 64, 255, 0.3);
+            box-shadow: 0 12px 30px rgba(191, 64, 255, 0.4);
         }
 
-        /* BRIGHT SERVICE TITLE */
+        /* BRIGHT SERVICE TITLE - UPDATED TO PURE WHITE */
         .service-title {
-            color: #ffff !important; /* Brighter almost-white lavender */
+            color: #ffffff !important; /* Pure white for maximum visibility */
             font-weight: 800;
-            font-size: 1.3rem;
+            font-size: 1.35rem;
             margin-bottom: 0.75rem;
-            text-shadow: 0 0 10px rgba(191, 64, 255, 0.5); /* Subtle neon glow */
+            /* Neon glow effect to make it pop */
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.3), 0 0 15px rgba(191, 64, 255, 0.6); 
         }
 
         .service-card img {
             border-bottom: 1px solid #3c2a61;
             height: 200px;
+            width: 100%;
             object-fit: cover;
         }
         
         h2, h4 {
-            color: #e0aaff; /* Vivid Lavender */
+            color: #ffffff; /* Set section headers to white */
             font-weight: 700;
+            text-shadow: 0 0 10px rgba(191, 64, 255, 0.3);
         }
 
-        .text-muted {
-            color: #cbd5e1 !important; /* Lighter grey for better readability */
+        /* Secondary text within the card */
+        .service-card .text-muted {
+            color: #e2e8f0 !important; /* Brighter secondary text */
         }
         
         .form-select, .form-control {
             background-color: #1a1033;
             border: 1px solid #3c2a61;
             color: #fff;
-            border-radius: 10px;
+            border-radius: 12px;
         }
 
         .form-select:focus, .form-control:focus {
@@ -88,7 +92,8 @@ $brands = fetch_brands_ctr();
         }
 
         .form-label {
-            color: #d980ff;
+            color: #e0aaff; /* Lavender for labels */
+            font-weight: 600;
         }
         
         .btn-custom {
@@ -97,7 +102,7 @@ $brands = fetch_brands_ctr();
             border: none;
             border-radius: 50px;
             padding: 10px 25px;
-            font-weight: 600;
+            font-weight: 700;
             box-shadow: 0 4px 15px rgba(157, 78, 221, 0.3);
             transition: 0.3s;
         }
@@ -113,7 +118,7 @@ $brands = fetch_brands_ctr();
             margin-top: 60px;
             padding: 40px 0;
             border-top: 1px solid #3c2a61;
-            background: rgba(10, 7, 20, 0.8);
+            background: rgba(10, 7, 20, 0.9);
         }
 
         .text-purple {
@@ -133,13 +138,13 @@ if (file_exists('../includes/navbar.php')) {
 
 <div class="container mt-5">
   <h2 class="fw-bold text-center mb-3">Browse Support Services</h2>
-  <p class="text-center text-muted mb-5">
+  <p class="text-center text-muted mb-5" style="color: #cbd5e1 !important;">
       Explore available medical, legal, and counseling services. Filter by category or provider.
   </p>
 
-  <div class="row mb-4 align-items-end g-3">
+  <div class="row mb-5 align-items-end g-3">
       <div class="col-md-4">
-          <label for="category_filter" class="form-label fw-bold">Filter by Category</label>
+          <label for="category_filter" class="form-label">Filter by Category</label>
           <select id="category_filter" class="form-select">
               <option value="">All Categories</option>
               <?php foreach ($categories as $cat): ?>
@@ -149,7 +154,7 @@ if (file_exists('../includes/navbar.php')) {
       </div>
 
       <div class="col-md-4">
-          <label for="brand_filter" class="form-label fw-bold">Filter by Provider</label>
+          <label for="brand_filter" class="form-label">Filter by Provider</label>
           <select id="brand_filter" class="form-select">
               <option value="">All Providers</option>
               <?php foreach ($brands as $brand): ?>
@@ -159,17 +164,17 @@ if (file_exists('../includes/navbar.php')) {
       </div>
 
       <div class="col-md-4">
-          <label for="search_box" class="form-label fw-bold">Search Service</label>
+          <label for="search_box" class="form-label">Search Service</label>
           <div class="input-group">
               <input type="text" id="search_box" class="form-control" placeholder="Search services...">
               <button class="btn btn-custom" id="search_btn">
-                  <i class="bi bi-search"></i> Search
+                  <i class="bi bi-search"></i>
               </button>
           </div>
       </div>
   </div>
 
-  <h4 class="mb-4 border-bottom border-secondary pb-2">Available Support</h4>
+  <h4 class="mb-4 border-bottom border-secondary pb-3">Available Support</h4>
   
   <div class="row g-4" id="service-list">
       <div class="text-center py-5">
@@ -186,7 +191,7 @@ if (file_exists('../includes/navbar.php')) {
 <footer class="text-center">
   <div class="container">
       <p class="mb-1 fw-semibold">© <?= date('Y'); ?> <span style="color: #bf40ff;">GBVAid</span></p>
-      <p class="small text-muted">Empowering safety and support for all.</p>
+      <p class="small text-muted" style="color: #cbd5e1 !important;">Empowering safety and support for all.</p>
   </div>
 </footer>
 

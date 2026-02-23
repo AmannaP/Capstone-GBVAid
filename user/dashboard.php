@@ -263,6 +263,34 @@ if (file_exists('../includes/navbar.php')) {
     </div>
 </div>
 
+<div class="card bg-dark border-purple p-3">
+    <h5 class="text-white">My Suggested Groups</h5>
+    <table class="table table-dark table-hover small">
+        <thead>
+            <tr>
+                <th>Group Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($my_requests as $req): ?>
+            <tr>
+                <td><?= htmlspecialchars($req['request_name']) ?></td>
+                <td>
+                    <?php if($req['status'] == 'approved'): ?>
+                        <span class="badge bg-success">Approved</span>
+                    <?php elseif($req['status'] == 'rejected'): ?>
+                        <span class="badge bg-danger">Declined</span>
+                    <?php else: ?>
+                        <span class="badge bg-warning text-dark">Pending Review</span>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
 <footer class="text-center mt-5">
     <div class="container">
         <p class="mb-1 fw-semibold">© <?= date('Y'); ?> <span style="color: #bf40ff;">GBVAid</span></p>

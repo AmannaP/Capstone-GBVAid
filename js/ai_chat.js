@@ -1,42 +1,94 @@
 // js/ai_chat.js
 $(document).ready(function() {
-    $('#send-btn').on('click', sendMessage);
-    $('#user-input').on('keypress', function(e) {
-        if(e.which == 13) sendMessage();
-    });
+    const chatWindow = $('#chat-window');
 
-    function sendMessage() {
-        const msg = $('#user-input').val();
-        if(!msg) return;
-
-        // Append user message to UI
-        $('#chat-window').append(`<div class="text-end mb-3"><p class="d-inline-block p-2 rounded bg-secondary small">${msg}</p></div>`);
-        $('#user-input').val('');
-        
-        // Show "AI is thinking"
-        const loadingId = 'load-' + Date.now();
-        $('#chat-window').append(`<div id="${loadingId}" class="mb-3 small opacity-50">AI is typing...</div>`);
-
-        $.ajax({
-            url: '../actions/ai_proxy.php',
-            type: 'POST',
-            data: JSON.stringify({ message: msg }),
-            contentType: 'application/json',
-            success: function(res) {
-                $(`#${loadingId}`).remove();
-                const aiResponse = res.choices[0].message.content;
-                
-                // Append AI response
-                $('#chat-window').append(`
-                    <div class="ai-msg mb-3">
-                        <span class="badge bg-primary">AI Listener</span>
-                        <p class="mt-2 small text-white">${aiResponse}</p>
-                    </div>
-                `);
-                
-                // Auto scroll to bottom
-                $('#chat-window').scrollTop($('#chat-window')[0].scrollHeight);
-            }
+    function scrollToBottom() {
+        const chatWindow = document.getElementById('chat-window');
+        chatWindow.scrollTo({
+            top: chatWindow.scrollHeight,
+            behavior: 'smooth'
         });
     }
+
+    function sendMessage() {
+        const message = $('#user-input').val().trim();
+        const isSilenced = $('#silenceToggle').is(':checked');
+
+        if (message === "") return;
+
+        // 1. Append User Message with the styled bubble
+        chatWindow.append(`
+            <div class="msg-wrapper">
+                <div class="user-msg-bubble">${message}</div>
+            </div>
+        `);
+        
+        $('#user-input').val('');
+        scrollToBottom();
+
+        // 2. Handle Silence Toggle (One-Way Venting)
+        if (isSilenced) {
+            $.post('../actions/ai_proxy.php', JSON.stringify({ message: message, silent: true }));
+            
+            chatWindow.append(`
+                <div class="msg-wrapper text-center my-2">
+                    <small class="text-white-50 italic">Message held in confidence...</small>
+                </div>
+            `);
+            scrollToBottom();
+        } 
+        else {
+            // 3. Normal AI Interaction
+            const loadingId = 'loading-' + Date.now();
+            chatWindow.append(`
+                <div class="msg-wrapper" id="${loadingId}">
+                    <div class="typing-glow">AI Listener is reflecting...</div>
+                </div>
+            `);
+            scrollToBottom();
+
+            $.ajax({
+                url: '../actions/ai_proxy.php',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ message: message }),
+                success: function(response) {
+                    $(`#${loadingId}`).remove();
+
+                    // Parse the response based on your proxy's JSON structure
+                    // Checking for both choices (OpenAI style) or direct reply field
+                    let aiReply = "";
+                    if (response.choices && response.choices[0].message) {
+                        aiReply = response.choices[0].message.content;
+                    } else {
+                        aiReply = response.reply || "I am listening. Please share more.";
+                    }
+                    
+                    chatWindow.append(`
+                        <div class="msg-wrapper">
+                            <div class="ai-msg-bubble">${aiReply}</div>
+                        </div>
+                    `);
+                    scrollToBottom();
+                },
+                error: function() {
+                    $(`#${loadingId}`).remove();
+                    chatWindow.append(`
+                        <div class="msg-wrapper">
+                            <div class="ai-msg-bubble">I'm having trouble connecting, but I'm still here for you.</div>
+                        </div>
+                    `);
+                    scrollToBottom();
+                }
+            });
+        }
+    }
+
+    // Event Listeners
+    $('#send-btn').on('click', sendMessage);
+    $('#user-input').on('keypress', function(e) {
+        if (e.which == 13) {
+            sendMessage();
+        }
+    });
 });
