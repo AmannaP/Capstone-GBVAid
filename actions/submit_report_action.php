@@ -1,7 +1,6 @@
 <?php
 // actions/submit_report_action.php
-session_start();
-require_once '../settings/db_class.php';
+require_once '../settings/core.php';
 require_once '../classes/report_class.php';
 
 // Return JSON response for AJAX
@@ -9,7 +8,7 @@ header('Content-Type: application/json');
 
 // 1. Security Check: Ensure user is logged in
 if (!isset($_SESSION['id'])) {
-    header("Location: ../login/login.php");
+    echo json_encode(['status' => 'error', 'message' => 'Your session has expired. Please log in again.']);
     exit();
 }
 

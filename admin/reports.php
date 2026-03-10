@@ -32,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_id'], $_POST['
             background-attachment: fixed;
         }
 
-        /* Navbar Styling */
         .navbar-admin {
             background-color: rgba(196, 83, 234, 0.1);
             backdrop-filter: blur(10px);
@@ -46,11 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_id'], $_POST['
             font-size: 1.5rem;
         }
 
-        /* Content Card / Table Container */
         .content-card {
             border: 1px solid #3c2a61;
             border-radius: 20px;
-            background: rgba(26, 16, 51, 0.9);
+            background: rgba(26, 16, 51, 0.95);
             backdrop-filter: blur(5px);
             padding: 30px;
             margin-top: 40px;
@@ -64,11 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_id'], $_POST['
             font-weight: 800;
         }
 
-        /* Table Aesthetics */
-        .table {
-            color: #ffffff;
-            border-color: rgba(60, 42, 97, 0.5);
-        }
+        .table { color: #ffffff; border-color: rgba(60, 42, 97, 0.5); }
 
         .table thead th {
             background-color: rgba(157, 78, 221, 0.1);
@@ -79,12 +73,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_id'], $_POST['
             letter-spacing: 1px;
         }
 
-        .table-hover tbody tr:hover {
-            background-color: rgba(191, 64, 255, 0.05);
-            color: #ffffff;
+        /* UPDATED: High-contrast black text for reporters */
+        .reporter-text-black {
+            color: #000000 !important;
+            font-weight: 700;
         }
 
-        /* Status Select Styling */
+        .reporter-subtext-black {
+            color: #000000 !important;
+            font-size: 0.8rem;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
         .form-select-custom {
             background-color: #1a1033;
             border: 1px solid #3c2a61;
@@ -95,38 +96,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_id'], $_POST['
             transition: 0.3s;
         }
 
-        .form-select-custom:focus {
-            border-color: #bf40ff;
-            box-shadow: 0 0 10px rgba(191, 64, 255, 0.3);
-            background-color: #1a1033;
-            color: #ffffff;
-        }
-
-        /* Custom Buttons */
         .btn-purple-outline {
             border: 1px solid #9d4edd;
             color: #e0aaff;
             border-radius: 50px;
             padding: 5px 15px;
-            transition: 0.3s;
         }
 
         .btn-purple-outline:hover {
             background-color: #9d4edd;
             color: white;
-            box-shadow: 0 0 15px rgba(157, 78, 221, 0.4);
         }
 
-        /* Modal Customization */
         .modal-content {
             background: #1a1033;
             border: 1px solid #bf40ff;
             color: white;
             border-radius: 20px;
         }
-        
-        .modal-header { border-bottom: 1px solid #3c2a61; }
-        .modal-footer { border-top: 1px solid #3c2a61; }
     </style>
 </head>
 <body>
@@ -173,10 +160,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_id'], $_POST['
                             <td><i class="bi bi-geo-alt me-1 text-muted"></i><?= htmlspecialchars($r['location']) ?></td>
                             <td>
                                 <?php if($r['is_anonymous']): ?>
-                                    <span class="text-muted italic small"><i class="bi bi-eye-slash me-1"></i>Anonymous</span>
+                                    <span class="reporter-text-black small"><i class="bi bi-eye-slash me-1"></i>Anonymous</span>
                                 <?php else: ?>
-                                    <div class="fw-bold text-light"><?= htmlspecialchars($r['victim_name']) ?></div>
-                                    <div class="small text-muted"><?= htmlspecialchars($r['victim_contact']) ?></div>
+                                    <div class="reporter-text-black mb-0"><?= htmlspecialchars($r['victim_name']) ?></div>
+                                    <div class="reporter-subtext-black"><?= htmlspecialchars($r['victim_contact']) ?></div>
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -225,7 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_id'], $_POST['
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title welcome-text" id="modalTitle">Incident Analysis</h5>
+        <h5 class="modal-title welcome-text">Incident Analysis</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
@@ -238,7 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_id'], $_POST['
             </div>
             <div class="col-6 text-end">
                 <small class="text-muted d-block">Filed By</small>
-                <strong id="modalReporter" class="text-light"></strong>
+                <strong id="modalReporter" class="text-white"></strong>
             </div>
         </div>
       </div>

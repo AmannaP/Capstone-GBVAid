@@ -23,7 +23,7 @@ class Chat extends db_conn {
     }
 
     // 3. Send a message
-    public function add_message($group_id, $victim_id, $message) {
+    public function send_message($group_id, $victim_id, $message) {
         if (!$this->db_connect()) return false;
         $sql = "INSERT INTO chat_messages (group_id, victim_id, message) VALUES (?, ?, ?)";
         $stmt = $this->db->prepare($sql);
@@ -193,6 +193,12 @@ class Chat extends db_conn {
                 SET group_name = '$name', description = '$desc', icon = '$icon' 
                 WHERE group_id = '$id'";
         return $this->db_query($sql);
+    }
+
+    // 15. get user suggested groups (for victim dashboard)
+    public function get_user_suggestions($victim_id) {
+        $sql = "SELECT suggested_name, status FROM group_requests WHERE victim_id = '$victim_id' ORDER BY created_at DESC";
+        return $this->db_fetch_all($sql);
     }
 }
 ?>

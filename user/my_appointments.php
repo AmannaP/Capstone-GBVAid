@@ -2,47 +2,12 @@
 require_once '../settings/core.php';
 require_once '../controllers/appointment_controller.php';
 
-// 1. Set Timezone
 date_default_timezone_set('Africa/Accra');
+requireLogin(); 
 
-if (!checkLogin()) {
-    header("Location: ../login/login.php");
-    exit();
-}
-
-// Fetch all appointments
-$appointments = get_user_appointments_ctr($_SESSION['id']);
-
-// Filter appointments
-$upcoming = [];
-$past = [];
-$now = new DateTime();
-
-foreach ($appointments as $appt) {
-    $apptTime = new DateTime($appt['appointment_date'] . ' ' . $appt['appointment_time']);
-    
-    // Logic: If time is in future AND not cancelled -> Upcoming
-    if ($apptTime >= $now && $appt['status'] != 'Cancelled') {
-        $upcoming[] = $appt;
-    } else {
-        $past[] = $appt; // Cancelled or Past dates go to History
-    }
-}
-
-// 2. SORTING LOGIC
-// Sort UPCOMING: Closest date at the top (Ascending)
-usort($upcoming, function($a, $b) {
-    $t1 = strtotime($a['appointment_date'] . ' ' . $a['appointment_time']);
-    $t2 = strtotime($b['appointment_date'] . ' ' . $b['appointment_time']);
-    return $t1 - $t2; // Ascending
-});
-
-// Sort PAST: Most recent history at the top (Descending)
-usort($past, function($a, $b) {
-    $t1 = strtotime($a['appointment_date'] . ' ' . $a['appointment_time']);
-    $t2 = strtotime($b['appointment_date'] . ' ' . $b['appointment_time']);
-    return $t2 - $t1; // Descending
-});
+$data = get_categorized_appointments_ctr(getUserId());
+$upcoming = $data['upcoming'];
+$past = $data['past'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -55,72 +20,85 @@ usort($past, function($a, $b) {
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
-            background-color: #c453eaff;
-            font-family: 'Segoe UI', sans-serif;
-            min-height: 100vh;
-        }
-        .page-container {
-            background-color: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            margin-top: 40px;
-            margin-bottom: 40px;
-            min-height: 60vh;
-        }
-        
-        /* FIXED TAB COLORS */
-        .nav-tabs {
-            border-bottom: 2px solid #f0f0f0;
-        }
-        .nav-tabs .nav-link {
-            color: #666 !important; /* Visible Grey for inactive */
-            font-weight: 600;
-            border: none;
-            background: transparent;
-        }
-        .nav-tabs .nav-link.active {
-            color: #c453eaff !important; /* Purple for active */
-            border-bottom: 3px solid #c453eaff;
-            background: transparent;
-        }
-        .nav-tabs .nav-link:hover {
-            color: #c453eaff !important;
-            border-color: transparent;
+            background-color: #0f0a1e;
+            font-family: 'Poppins', sans-serif;
+            color: #ffffff;
+            background-image: radial-gradient(#3c2a61 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-attachment: fixed;
         }
 
+        .page-container {
+            background: rgba(26, 16, 51, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid #3c2a61;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+
+        .text-neon-purple {
+            color: #e0aaff;
+            text-shadow: 0 0 10px rgba(191, 64, 255, 0.3);
+        }
+
+        /* TABS STYLING */
+        .nav-tabs { border-bottom: 1px solid #3c2a61; }
+        .nav-tabs .nav-link {
+            color: #a49db5 !important;
+            font-weight: 600;
+            border: none;
+            transition: 0.3s;
+        }
+        .nav-tabs .nav-link.active {
+            color: #bf40ff !important;
+            background: transparent !important;
+            border-bottom: 3px solid #bf40ff;
+        }
+
+        /* APPOINTMENT CARD STYLING */
         .appt-card {
-            border: 1px solid #f0f0f0;
-            border-radius: 12px;
-            background: #fff;
-            overflow: hidden;
+            border: 1px solid #3c2a61;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.03);
             margin-bottom: 15px;
-            transition: transform 0.2s;
+            transition: 0.3s;
         }
         .appt-card:hover {
-            transform: translateY(-2px);
-            border-color: #e598ffff;
+            border-color: #bf40ff;
+            background: rgba(191, 64, 255, 0.05);
+            transform: translateY(-3px);
         }
         
         .date-box {
             text-align: center;
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 8px 12px;
-            min-width: 90px;
-            border: 1px solid #eee;
+            background: rgba(157, 78, 221, 0.1);
+            border: 1px solid rgba(191, 64, 255, 0.2);
+            border-radius: 12px;
+            padding: 10px;
+            min-width: 85px;
         }
-        .date-day { font-size: 1.4rem; font-weight: 800; color: #333; line-height: 1; }
-        .date-month { font-size: 0.8rem; color: #666; text-transform: uppercase; }
-        .date-year { font-size: 0.7rem; color: #999; font-weight: 600; }
+        .date-day { font-size: 1.5rem; font-weight: 800; color: #fff; }
+        .date-month { font-size: 0.8rem; color: #e0aaff; text-transform: uppercase; }
         
-        .btn-outline-danger {
-            border-color: #dc3545;
-            color: #dc3545;
-        }
-        .btn-outline-danger:hover {
-            background-color: #dc3545;
+        .btn-neon {
+            background-color: #9d4edd;
             color: white;
+            border-radius: 50px;
+            border: none;
+            transition: 0.3s;
+        }
+        .btn-neon:hover {
+            background-color: #bf40ff;
+            box-shadow: 0 0 15px rgba(191, 64, 255, 0.4);
+        }
+
+        .badge-confirmed {
+            background: rgba(0, 255, 204, 0.1);
+            color: #00ffcc;
+            border: 1px solid rgba(0, 255, 204, 0.3);
         }
     </style>
 </head>
@@ -131,18 +109,22 @@ usort($past, function($a, $b) {
 <div class="container">
     <div class="page-container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold mb-0 text-dark">My Sessions</h2>
-            <a href="service_page.php" class="btn text-white fw-bold" style="background-color: #c453eaff; border-radius: 50px;">
+            <h2 class="fw-bold mb-0 text-neon-purple">My Scheduled Sessions</h2>
+            <a href="service_page.php" class="btn btn-neon px-4 py-2 fw-bold">
                 <i class="bi bi-plus-lg me-1"></i> Book New
             </a>
         </div>
 
         <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
             <li class="nav-item">
-                <button class="nav-link active" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming" type="button">Upcoming (<?= count($upcoming) ?>)</button>
+                <button class="nav-link active" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming" type="button">
+                    Upcoming (<?= count($upcoming) ?>)
+                </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button">History</button>
+                <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button">
+                    History
+                </button>
             </li>
         </ul>
 
@@ -151,9 +133,8 @@ usort($past, function($a, $b) {
             <div class="tab-pane fade show active" id="upcoming" role="tabpanel">
                 <?php if (empty($upcoming)): ?>
                     <div class="text-center py-5">
-                        <i class="bi bi-calendar-check text-muted opacity-25 display-1"></i>
-                        <p class="mt-3 text-muted">No upcoming sessions scheduled.</p>
-                        <a href="service_page.php" class="btn btn-sm btn-outline-secondary rounded-pill mt-2">Find a Service</a>
+                        <i class="bi bi-calendar-x text-muted opacity-25 display-1"></i>
+                        <p class="mt-3 text-muted">No upcoming sessions. You're all clear.</p>
                     </div>
                 <?php else: ?>
                     <?php foreach ($upcoming as $appt): 
@@ -164,21 +145,15 @@ usort($past, function($a, $b) {
                         <div class="date-box me-3">
                             <div class="date-day"><?= $dateObj->format('d') ?></div>
                             <div class="date-month"><?= $dateObj->format('M') ?></div>
-                            <div class="date-year"><?= $dateObj->format('Y') ?></div>
                         </div>
                         
                         <div class="flex-grow-1">
-                            <h5 class="fw-bold mb-1 text-dark"><?= htmlspecialchars($appt['service_title']) ?></h5>
-                            <div class="text-muted small">
+                            <h5 class="fw-bold mb-1" style="color: #f3e8ff;"><?= htmlspecialchars($appt['service_title']) ?></h5>
+                            <div class="small opacity-75">
                                 <i class="bi bi-clock me-1"></i> <?= $timeObj->format('h:i A') ?> 
                                 <span class="mx-2">•</span> 
-                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">Confirmed</span>
+                                <span class="badge badge-confirmed">Confirmed</span>
                             </div>
-                            <?php if(!empty($appt['notes'])): ?>
-                                <div class="text-muted small mt-1 fst-italic text-truncate" style="max-width: 300px;">
-                                    Note: <?= htmlspecialchars($appt['notes']) ?>
-                                </div>
-                            <?php endif; ?>
                         </div>
                         
                         <div>
@@ -193,29 +168,25 @@ usort($past, function($a, $b) {
 
             <div class="tab-pane fade" id="history" role="tabpanel">
                 <?php if (empty($past)): ?>
-                    <div class="text-center py-5">
-                        <p class="text-muted">No past appointment history.</p>
+                    <div class="text-center py-5 text-muted">
+                        <p>No past appointment history.</p>
                     </div>
                 <?php else: ?>
                     <?php foreach ($past as $appt): 
                         $dateObj = new DateTime($appt['appointment_date']);
-                        $statusColor = ($appt['status'] == 'Cancelled') ? 'text-danger' : 'text-muted';
-                        $statusBg = ($appt['status'] == 'Cancelled') ? 'bg-danger bg-opacity-10' : 'bg-secondary bg-opacity-10';
+                        $isCancelled = ($appt['status'] == 'Cancelled');
                     ?>
-                    <div class="appt-card p-3 d-flex align-items-center opacity-75" style="background-color: #fcfcfc;">
-                        <div class="date-box me-3 bg-light border-0">
-                            <div class="date-day text-muted"><?= $dateObj->format('d') ?></div>
-                            <div class="date-month text-muted"><?= $dateObj->format('M') ?></div>
-                            <div class="date-year text-muted"><?= $dateObj->format('Y') ?></div>
+                    <div class="appt-card p-3 d-flex align-items-center opacity-50">
+                        <div class="date-box me-3" style="background: rgba(255,255,255,0.05);">
+                            <div class="date-day"><?= $dateObj->format('d') ?></div>
+                            <div class="date-month"><?= $dateObj->format('M') ?></div>
                         </div>
                         <div>
-                            <h6 class="fw-bold mb-1 text-secondary"><?= htmlspecialchars($appt['service_title']) ?></h6>
-                            <small class="badge <?= $statusBg ?> <?= $statusColor ?>">
+                            <h6 class="fw-bold mb-1 text-light"><?= htmlspecialchars($appt['service_title']) ?></h6>
+                            <small class="badge <?= $isCancelled ? 'bg-danger' : 'bg-secondary' ?> bg-opacity-10 text-uppercase" style="font-size: 0.65rem;">
                                 <?= $appt['status'] ?>
                             </small>
-                            <small class="text-muted ms-2">
-                                <?= $dateObj->format('F d, Y') ?>
-                            </small>
+                            <small class="ms-2 opacity-50"><?= $dateObj->format('F d, Y') ?></small>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -227,36 +198,7 @@ usort($past, function($a, $b) {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Cancel Appointment Logic
-    $('.cancel-btn').click(function() {
-        const id = $(this).data('id');
-        Swal.fire({
-            title: 'Cancel Session?',
-            text: "This will cancel your upcoming appointment. This action cannot be undone.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Yes, Cancel it'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Show loading
-                Swal.fire({title: 'Processing...', didOpen: () => Swal.showLoading()});
-                
-                $.post('../actions/cancel_appointment_action.php', { appointment_id: id }, function(res) {
-                    if (res.trim() === 'success') {
-                        Swal.fire('Cancelled', 'Your appointment has been cancelled.', 'success').then(() => location.reload());
-                    } else {
-                        Swal.fire('Error', 'Could not cancel appointment. Please try again.', 'error');
-                    }
-                }).fail(function() {
-                    Swal.fire('Error', 'Network error.', 'error');
-                });
-            }
-        });
-    });
-</script>
+<script src="../js/appointment_handler.js"></script>
 
 </body>
 </html>

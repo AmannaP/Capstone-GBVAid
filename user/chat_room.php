@@ -185,8 +185,10 @@ if (!$group) {
         </button>
     </form>
 </div>
-
+<script>
+    const current_user_id = <?= $_SESSION['id']; ?>;
+    const group_id = <?= $group['group_id']; ?>;
+</script>
 <script src="../js/chat.js"></script>
-
 </body>
 </html>

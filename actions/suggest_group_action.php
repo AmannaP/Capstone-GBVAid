@@ -1,8 +1,9 @@
 <?php
 // actions/suggest_group_action.php
-session_start();
-header('Content-Type: application/json');
+require_once '../settings/core.php'; 
 require_once '../classes/chat_class.php';
+
+header('Content-Type: application/json');
 
 if (!isset($_SESSION['id'])) {
     echo json_encode(['status' => 'error', 'message' => 'Please login first.']);
@@ -10,8 +11,8 @@ if (!isset($_SESSION['id'])) {
 }
 
 $uid = $_SESSION['id'];
-$name = htmlspecialchars($_POST['suggested_name'] ?? '');
-$reason = htmlspecialchars($_POST['reason_description'] ?? '');
+$name = $_POST['suggested_name'] ?? '';
+$reason = $_POST['reason_description'] ?? '';
 
 if (empty($name) || empty($reason)) {
     echo json_encode(['status' => 'error', 'message' => 'Please fill all fields.']);

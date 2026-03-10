@@ -64,9 +64,21 @@ $(document).ready(function() {
                         aiReply = response.reply || "I am listening. Please share more.";
                     }
                     
+                    // Parse Markdown to HTML
+                    let formattedReply = aiReply;
+                    try {
+                        if (window.marked) {
+                            formattedReply = window.marked.parse ? window.marked.parse(aiReply) : window.marked(aiReply);
+                        } else if (typeof marked !== 'undefined') {
+                            formattedReply = marked.parse ? marked.parse(aiReply) : marked(aiReply);
+                        }
+                    } catch (e) {
+                        console.error('Marked parsing failed:', e);
+                    }
+                    
                     chatWindow.append(`
                         <div class="msg-wrapper">
-                            <div class="ai-msg-bubble">${aiReply}</div>
+                            <div class="ai-msg-bubble">${formattedReply}</div>
                         </div>
                     `);
                     scrollToBottom();

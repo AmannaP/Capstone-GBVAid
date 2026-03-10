@@ -42,6 +42,9 @@ $brands = fetch_brands_ctr();
             height: 100%;
             overflow: hidden;
         }
+        .service-card .card-body {
+            padding: 1.5rem;
+        }
 
         .service-card:hover {
             transform: translateY(-8px);
@@ -53,10 +56,17 @@ $brands = fetch_brands_ctr();
         .service-title {
             color: #ffffff !important; /* Pure white for maximum visibility */
             font-weight: 800;
-            font-size: 1.35rem;
+            font-size: 1.25rem;
             margin-bottom: 0.75rem;
-            /* Neon glow effect to make it pop */
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.3), 0 0 15px rgba(191, 64, 255, 0.6); 
+            line-height: 1.3;
+            /* Allow the title to wrap to 2 lines, then truncate if even longer */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            /* Stronger text shadow for visibility against any background */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); 
         }
 
         .service-card img {
@@ -82,6 +92,11 @@ $brands = fetch_brands_ctr();
             border: 1px solid #3c2a61;
             color: #fff;
             border-radius: 12px;
+        }
+
+        .form-control::placeholder {
+            color: #6b7280 !important; /* Brighter placeholder */
+            opacity: 0.8;
         }
 
         .form-select:focus, .form-control:focus {

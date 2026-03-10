@@ -1,12 +1,18 @@
 <?php
 // user/dashboard.php
 require_once '../settings/core.php';
+require_once '../classes/chat_class.php';
+require_once '../controllers/chat_controller.php';
 
 // Ensure user is logged in
-// if (!checkLogin()) {
-//     header("Location: ../login/login.php");
-//     exit();
-// }
+if (!isset($_SESSION['id'])) {
+    header("Location: ../login/login.php");
+    exit();
+}
+
+$user_id = $_SESSION['id'];
+// Fetch the specific user's group suggestions
+$my_requests = get_user_group_suggestions_ctr($user_id); 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -273,20 +279,26 @@ if (file_exists('../includes/navbar.php')) {
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($my_requests as $req): ?>
-            <tr>
-                <td><?= htmlspecialchars($req['request_name']) ?></td>
-                <td>
-                    <?php if($req['status'] == 'approved'): ?>
-                        <span class="badge bg-success">Approved</span>
-                    <?php elseif($req['status'] == 'rejected'): ?>
-                        <span class="badge bg-danger">Declined</span>
-                    <?php else: ?>
-                        <span class="badge bg-warning text-dark">Pending Review</span>
-                    <?php endif; ?>
-                </td>
-            </tr>
-            <?php endforeach; ?>
+            <?php if (!empty($my_requests)): ?>
+                <?php foreach ($my_requests as $req): ?>
+                <tr>
+                    <td><?= htmlspecialchars($req['suggested_name']) ?></td>
+                    <td>
+                        <?php if($req['status'] == 'approved'): ?>
+                            <span class="badge bg-success">Approved</span>
+                        <?php elseif($req['status'] == 'rejected'): ?>
+                            <span class="badge bg-danger">Declined</span>
+                        <?php else: ?>
+                            <span class="badge bg-warning text-dark">Pending Review</span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="2" class="text-center text-muted">You haven't suggested any groups yet.</td>
+                </tr>
+            <?php endif; ?>
         </tbody>
     </table>
 </div>

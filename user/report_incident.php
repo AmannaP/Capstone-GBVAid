@@ -138,9 +138,21 @@ if (file_exists('../includes/navbar.php')) {
                                 <input type="date" name="incident_date" class="form-control" max="<?= date('Y-m-d') ?>" required>
                             </div>
                             <div class="col-md-6 mb-4">
-                                <label class="form-label">Location (City/Area)</label>
-                                <input type="text" name="location" class="form-control" placeholder="e.g. Kumasi, Bantama" required>
+                                <label class="form-label" for="region">Region in Ghana</label>
+                                <select id="region" name="region" class="form-select" autocomplete="address-level1" required>
+                                    <option value="" disabled selected>-- Select Region --</option>
+                                </select>
                             </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label" for="area">Area in Ghana</label>
+                                <select id="area" name="area" class="form-select" autocomplete="address-level2" required>
+                                    <option value="" disabled selected>-- Select Area --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="other-area-container" class="mb-4" style="display: none;">
+                            <label class="form-label" for="other_area">Specify Your Location</label>
+                            <input type="text" id="other_area" name="other_area" class="form-control" placeholder="Enter your specific town or area" autocomplete="off">
                         </div>
 
                         <div class="mb-4">

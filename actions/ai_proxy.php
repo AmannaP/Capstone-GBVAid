@@ -9,7 +9,7 @@ header('Content-Type: application/json');
 $input = json_decode(file_get_contents('php://input'), true);
 $userMessage = $input['message'] ?? '';
 $isSilent = $input['silent'] ?? false;
-$user_id = $_SESSION['user_id'] ?? null;
+$user_id = $_SESSION['id'] ?? null;
 
 if (empty($userMessage)) {
     echo json_encode(['reply' => 'I am listening, but I didn\'t catch that message.']);
@@ -28,8 +28,8 @@ function loadEnv($path) {
 
 loadEnv(__DIR__ . '/../.env');
 
-// TYPO FIX: Changed OPEN_API_KEY to OPENAI_API_KEY to match typical .env naming
-$apiKey = $_ENV['OPENAI_API_KEY'] ?? 'sk-proj-DUMMY_FOR_GITHUB';
+// TYPO FIX: Changed OPEN_API_KEY to GEMINI_API_KEY
+$apiKey = $_ENV['GEMINI_API_KEY'] ?? 'mock-key';
 
 $systemPrompt = "You are an empathetic AI listener for GBVAid, supporting survivors in Ghana. 
 Your tone is gentle and non-judgmental. 
@@ -45,27 +45,38 @@ if ($isSilent) {
 }
 
 $data = [
-    'model' => 'gpt-3.5-turbo',
-    'messages' => [
-        ['role' => 'system', 'content' => $systemPrompt],
-        ['role' => 'user', 'content' => $userMessage]
+    'system_instruction' => [
+        'parts' => [
+            ['text' => $systemPrompt]
+        ]
     ],
-    'temperature' => 0.7
+    'contents' => [
+        [
+            'parts' => [
+                ['text' => $userMessage]
+            ]
+        ]
+    ],
+    'generationConfig' => [
+        'temperature' => 0.7
+    ]
 ];
 
-$ch = curl_init('https://api.openai.com/v1/chat/completions');
+// Determine the URL
+$url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . $apiKey;
+
+$ch = curl_init($url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // CRITICAL: Fixes XAMPP connection issues
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Content-Type: application/json',
-    'Authorization: Bearer ' . $apiKey
+    'Content-Type: application/json'
 ]);
 
 $response = curl_exec($ch);
 $err = curl_error($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); // Added this missing line
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
 if ($err) {
@@ -75,15 +86,30 @@ if ($err) {
 
 $resData = json_decode($response, true);
 
-if ($httpCode !== 200) {
+if ($httpCode !== 200 || isset($resData['error'])) {
+    // Fallback to simulated responses if API quota is exceeded or key is invalid
+    $fallbackReplies = [
+        "I hear you, and I want you to know you're not alone in this.",
+        "Thank you for sharing that with me. This is a safe space.",
+        "It sounds like you're going through a lot. I'm here to listen.",
+        "Your feelings are valid. Please take all the time you need to vent.",
+        "I am listening. Sometimes just letting it out can help."
+    ];
+    $aiReply = $fallbackReplies[array_rand($fallbackReplies)];
+    
+    // Log the simulated response
+    $db = new db_conn();
+    $sql = "INSERT INTO ai_logs (user_id, user_message, ai_response, sentiment_flag) VALUES (?, ?, ?, ?)";
+    $db->db_query($sql, [$user_id, $userMessage, $aiReply . ' (Simulated)', 'NEUTRAL']);
+
     echo json_encode([
-        'reply' => 'My connection is currently restricted.',
-        'debug_error' => $resData['error']['message'] ?? 'Unknown API Error'
+        'reply' => $aiReply,
+        'debug_error' => $resData['error']['message'] ?? 'Unknown API Error HTTP Code: ' . $httpCode
     ]);
     exit;
 }
 
-$aiReply = $resData['choices'][0]['message']['content'] ?? 'I am listening.';
+$aiReply = $resData['candidates'][0]['content']['parts'][0]['text'] ?? 'I am listening.';
 
 $db = new db_conn();
 $sql = "INSERT INTO ai_logs (user_id, user_message, ai_response, sentiment_flag) VALUES (?, ?, ?, ?)";

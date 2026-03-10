@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <style>
         /* Force the body to be exactly the height of the screen and not scroll */
@@ -91,6 +92,17 @@
             backdrop-filter: blur(5px);
             word-wrap: break-word;
         }
+
+        /* Markdown Formatting for AI Bubble */
+        .ai-msg-bubble p { margin-bottom: 10px; line-height: 1.5; }
+        .ai-msg-bubble p:last-child { margin-bottom: 0; }
+        .ai-msg-bubble ul, .ai-msg-bubble ol { 
+            padding-left: 20px; 
+            margin-bottom: 10px; 
+        }
+        .ai-msg-bubble ul:last-child, .ai-msg-bubble ol:last-child { margin-bottom: 0; }
+        .ai-msg-bubble li { margin-bottom: 5px; }
+        .ai-msg-bubble strong { color: #ffffff; font-weight: 600; }
 
         /* Typing Indicator Animation */
         .typing-glow {
@@ -182,7 +194,7 @@
     </div>
 </div>
 
-<script src="../js/ai_chat.js"></script>
+<script src="../js/ai_chat.js?v=2"></script>
 
 </body>
 </html>

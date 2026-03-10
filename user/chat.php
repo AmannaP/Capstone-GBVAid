@@ -107,6 +107,21 @@ $groups = get_chat_groups_ctr();
             border-color: #bf40ff;
             box-shadow: none;
         }
+        /* Custom Placeholder Styling */
+        .form-control::placeholder {
+            color: #a49db5 !important; 
+            opacity: 1; 
+        }
+
+        /* For Internet Explorer 10-11 */
+        .form-control:-ms-input-placeholder {
+            color: #a49db5 !important;
+        }
+
+        /* For Microsoft Edge */
+        .form-control::-ms-input-placeholder {
+            color: #a49db5 !important;
+        }
     </style>
 </head>
 <body>
@@ -128,8 +143,8 @@ $groups = get_chat_groups_ctr();
                         <i class="bi <?= htmlspecialchars($group['icon'] ?? 'bi-people') ?>"></i>
                     </div>
                 </div>
-                <h5 class="fw-bold" style="color: #e0aaff;"><?= htmlspecialchars($group['group_name']) ?></h5>
-                <p class="small mb-4" style="color: #cbd5e1;"><?= htmlspecialchars($group['description']) ?></p>
+                <h5 class="fw-bold" style="color: #e0aaff;"><?= htmlspecialchars(htmlspecialchars_decode($group['group_name'], ENT_QUOTES)) ?></h5>
+                <p class="small mb-4" style="color: #cbd5e1;"><?= htmlspecialchars(htmlspecialchars_decode($group['description'], ENT_QUOTES)) ?></p>
                 <a href="chat_room.php?id=<?= $group['group_id'] ?>" class="btn btn-join w-100">
                     Join Discussion
                 </a>

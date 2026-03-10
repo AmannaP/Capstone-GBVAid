@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once '../settings/core.php'; // Ensures session is started and validated
 require_once '../controllers/chat_controller.php';
 
 $gid = $_GET['group_id'] ?? null;

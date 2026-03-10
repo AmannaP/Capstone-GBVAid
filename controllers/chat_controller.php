@@ -12,9 +12,9 @@ function get_group_details_ctr($id) {
     return $chat->get_group_details($id);
 }
 
-function add_message_ctr($group_id, $victim_id, $msg) {
+function send_message_ctr($group_id, $victim_id, $msg) {
     $chat = new Chat();
-    return $chat->add_message($group_id, $victim_id, $msg);
+    return $chat->send_message($group_id, $victim_id, $msg);
 }
 
 function get_messages_ctr($group_id) {
@@ -55,6 +55,12 @@ function reject_suggestion_ctr($request_id) {
 function update_group_ctr($id, $name, $desc, $icon) {
     $chat_instance = new Chat();
     return $chat_instance->update_group($id, $name, $desc, $icon);
+}
+
+// controllers/chat_controller.php
+function get_user_group_suggestions_ctr($victim_id) {
+    $chat_instance = new Chat(); 
+    return $chat_instance->get_user_suggestions($victim_id);
 }
 
 ?>

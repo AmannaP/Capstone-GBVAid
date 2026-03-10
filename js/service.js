@@ -219,14 +219,14 @@ $(document).ready(function () {
                                         </a>
                                         
                                         <div class="card-body d-flex flex-column p-3">
-                                            <h5 class="fw-bold text-dark text-truncate">${p.service_title}</h5>
+                                            <h5 class="service-title fw-bold">${p.service_title}</h5>
                                             
                                             <div class="d-flex justify-content-between mb-2">
-                                                <small class="text-muted"><i class="bi bi-tag"></i> ${p.cat_name}</small>
-                                                <small class="text-muted"><i class="bi bi-shop"></i> ${p.brand_name}</small>
+                                                <small style="color: #cbd5e1;"><i class="bi bi-tag"></i> ${p.cat_name}</small>
+                                                <small style="color: #cbd5e1;"><i class="bi bi-shop"></i> ${p.brand_name}</small>
                                             </div>
                                             
-                                            <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                                            <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center" style="border-color: rgba(255,255,255,0.1) !important;">
                                                 <span class="fw-bold" style="color: #c453eaff; font-size: 1.1rem;">
                                                     GH₵ ${parseFloat(p.service_price).toFixed(2)}
                                                 </span>

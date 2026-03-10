@@ -181,64 +181,7 @@ if (file_exists('../includes/navbar.php')) {
         <p class="small opacity-50">Providing a safe passage to recovery and justice.</p>
     </div>
 </footer>
-
-<script>
-    $('#booking-form').on('submit', function(e) {
-        e.preventDefault();
-        
-        const btn = $(this).find('button[type="submit"]');
-        const originalText = btn.text();
-        btn.html('<span class="spinner-border spinner-border-sm"></span> Securing Slot...').prop('disabled', true);
-
-        $.ajax({
-            url: '../actions/add_to_cart_action.php',
-            type: 'POST',
-            data: $(this).serialize(),
-            dataType: 'json',
-            success: function(res) {
-                if(res.status === 'success') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Appointment Requested',
-                        text: 'Your session has been added to the booking list.',
-                        showCancelButton: true,
-                        confirmButtonText: 'View My List',
-                        cancelButtonText: 'Add More Services',
-                        confirmButtonColor: '#9d4edd',
-                        background: '#1a1033',
-                        color: '#fff'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = '../views/cart.php';
-                        } else {
-                            window.location.href = '../user/service_page.php';
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Booking Failed',
-                        text: res.message,
-                        background: '#1a1033',
-                        color: '#fff'
-                    });
-                }
-            },
-            error: function(xhr) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'System Error',
-                    text: 'Please Login to Access Services.',
-                    background: '#1a1033',
-                    color: '#fff'
-                });
-            },
-            complete: function() {
-                btn.html(originalText).prop('disabled', false);
-            }
-        });
-    });
-</script>
+<script src="../js/booking_handler.js"></script>
 
 </body>
 </html>
