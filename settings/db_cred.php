@@ -1,26 +1,32 @@
 <?php
-//Database credentials
-// Settings/db_cred.php
+/**
+ * Database credentials for GBVAid
+ * This script pulls from Railway Environment Variables in production
+ * and falls back to localhost for development.
+ */
 
-// define('DB_HOST', 'localhost');
-// define('DB_USER', 'root');
-// define('DB_PASS', '');
-// define('DB_NAME', 'dbforlab');
-
-
+// 1. Database Server/Host
 if (!defined("DB_SERVER")) {
-    define("DB_SERVER", "localhost");
+    define("DB_SERVER", getenv('MYSQLHOST') ?: "mysql.railway.internal");
 }
 
+// 2. Database Username
 if (!defined("DB_USERNAME")) {
-    define("DB_USERNAME", "root");
+    define("DB_USERNAME", getenv('MYSQLUSER') ?: "root");
 }
 
+// 3. Database Password
 if (!defined("DB_PASSWORD")) {
-    define("DB_PASSWORD", "");
+    define("DB_PASSWORD", getenv('MYSQLPASSWORD') ?: "SEzrunnqUlMUQdQgSZKVldLlFHhDTtYu");
 }
 
+// 4. Database Name
 if (!defined("DB_NAME")) {
-    define("DB_NAME", "capstone");
+    define("DB_NAME", getenv('MYSQLDATABASE') ?: "railway");
+}
+
+// 5. Database Port (The missing piece)
+if (!defined("DB_PORT")) {
+    define("DB_PORT", getenv('MYSQLPORT') ?: "3306");
 }
 ?>
