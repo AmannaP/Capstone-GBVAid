@@ -7,7 +7,7 @@
 
 // 1. Database Server/Host
 if (!defined("DB_SERVER")) {
-    define("DB_SERVER", getenv('MYSQLHOST') ?: "mysql.railway.internal");
+    define("DB_SERVER", getenv('MYSQLHOST') ?: "centerbeam.proxy.rlwy.net");
 }
 
 // 2. Database Username
@@ -27,6 +27,6 @@ if (!defined("DB_NAME")) {
 
 // 5. Database Port (The missing piece)
 if (!defined("DB_PORT")) {
-    define("DB_PORT", getenv('MYSQLPORT') ?: "3306");
+    define("DB_PORT", getenv('MYSQLPORT') ?: "17600");
 }
 ?>
