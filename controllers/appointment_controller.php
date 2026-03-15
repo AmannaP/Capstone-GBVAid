@@ -70,3 +70,22 @@ function cancel_appointment_ctr($sid, $uid) {
     $apptObject = new Appointment();
     return $apptObject->cancel_appointment($sid, $uid);
 }
+
+/**
+ * Controller function to get all bookings for admin
+ */
+function get_all_bookings_admin_ctr() {
+    $apptObject = new Appointment();
+    return $apptObject->get_all_bookings_admin();
+}
+
+function get_bookings_by_category_ctr($cat_id) {
+    $apptObject = new Appointment();
+    return $apptObject->get_bookings_by_category($cat_id);
+}
+
+function update_booking_status_ctr($appt_id, $status) {
+    $apptObject = new Appointment();
+    return $apptObject->update_booking_status($appt_id, $status);
+}
+?>

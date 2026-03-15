@@ -7,7 +7,41 @@ class Incident extends db_conn {
     public function saveSOSLocation($victim_id, $lat, $lon) {
         // Ensure table name 'incidents' matches your phpMyAdmin
         $sql = "INSERT INTO incidents (victim_id, lat, lon, status) VALUES (?, ?, ?, 'ACTIVE')";
-        return $this->db_query($sql, [$victim_id, $lat, $lon]);
+        if ($this->db_query($sql, [$victim_id, $lat, $lon])) {
+            return $this->last_insert_id();
+        }
+        return false;
+    }
+
+    /**
+     * Save an audio chunk for an active incident
+     */
+    public function saveIncidentAudio($incident_id, $file_path) {
+        $sql = "INSERT INTO incident_audio (incident_id, audio_path) VALUES (?, ?)";
+        return $this->db_query($sql, [$incident_id, $file_path]);
+    }
+
+    /**
+     * Fetch unplayed audio chunks for an active incident
+     */
+    public function getIncidentAudio($incident_id, $last_audio_id) {
+        $sql = "SELECT audio_id, audio_path, recorded_at 
+                FROM incident_audio 
+                WHERE incident_id = ? AND audio_id > ? 
+                ORDER BY audio_id ASC";
+        
+        // Ensure query executes with parameters correctly
+        if (!$this->db_query($sql, [$incident_id, $last_audio_id])) {
+            return [];
+        }
+        
+        // Depending on your db_class architecture, you either use db_fetch_all if it takes raw SQL, 
+        // or fetch from $this->results if it's already executed.
+        // Assuming your updated db_class PDO prepares into $this->results:
+        if ($this->results && !is_bool($this->results)) {
+             return $this->results->fetchAll(PDO::FETCH_ASSOC);
+        }
+        return [];
     }
 
     /**

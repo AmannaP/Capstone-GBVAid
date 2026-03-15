@@ -81,6 +81,10 @@ $contents = get_all_awareness_ctr();
             color: #ffffff;
             box-shadow: 0 0 15px rgba(191, 64, 255, 0.3);
         }
+        .form-control::placeholder {
+            color: #8a68b0;
+            opacity: 1;
+        }
 
         .list-group-item {
             background: transparent;

@@ -58,9 +58,14 @@ function triggerEmergencyUI(incidentId) {
     });
 }
 
-function openEmergency(incidentId) {
-    voiceStreamSim.play();
+// Player Variables
+let audioQueue = [];
+let isPlayingAudio = false;
+let lastAudioId = 0;
+let audioPollInterval = null;
+let currentAudioNode = null;
 
+function openEmergency(incidentId) {
     Swal.fire({
         title: 'LIVE VOICE FEED ACTIVE',
         html: `<p>Listening to Incident <b>#${incidentId}</b></p>
@@ -69,16 +74,64 @@ function openEmergency(incidentId) {
         icon: 'info',
         background: '#1a1033',
         color: '#fff',
-        confirmButtonText: 'Mute Feed',
+        confirmButtonText: 'Mute Feed / Close Viewer',
         footer: '<span style="color: #ff4d4d">Automatic shutdown active upon arrival.</span>'
     }).then(() => {
-        voiceStreamSim.pause();
+        clearInterval(audioPollInterval);
+        if (currentAudioNode) currentAudioNode.pause();
+        audioQueue = [];
+        isPlayingAudio = false;
+    });
+
+    // Reset Audio logic
+    lastAudioId = 0;
+    audioQueue = [];
+    isPlayingAudio = false;
+    
+    // Start interval to fetch chunks
+    audioPollInterval = setInterval(() => fetchLiveAudio(incidentId), 4000);
+    fetchLiveAudio(incidentId);
+}
+
+function fetchLiveAudio(incidentId) {
+    $.getJSON('../actions/get_incident_audio.php', { incident_id: incidentId, last_audio_id: lastAudioId })
+        .done(function(data) {
+            if (data.status === 'success' && data.chunks && data.chunks.length > 0) {
+                // Add chunks to queue
+                data.chunks.forEach(chunk => {
+                    audioQueue.push(chunk);
+                    lastAudioId = Math.max(lastAudioId, chunk.audio_id);
+                });
+                
+                if (!isPlayingAudio) {
+                    playNextChunk();
+                }
+            }
+        });
+}
+
+function playNextChunk() {
+    if (audioQueue.length === 0) {
+        isPlayingAudio = false;
+        return;
+    }
+    
+    isPlayingAudio = true;
+    const chunk = audioQueue.shift();
+    
+    currentAudioNode = new Audio('../uploads/sos_audio/' + chunk.audio_path);
+    currentAudioNode.onended = () => playNextChunk();
+    currentAudioNode.onerror = () => playNextChunk();
+    currentAudioNode.play().catch(e => {
+        console.warn("Browser prevented autoplay:", e);
+        isPlayingAudio = false;
     });
 }
 
 function simulateArrival(incidentId) {
     $.post('../actions/stop_sos.php', { incident_id: incidentId }, function() {
-        voiceStreamSim.pause();
+        clearInterval(audioPollInterval);
+        if (currentAudioNode) currentAudioNode.pause();
         Swal.fire({
             title: 'ARRIVAL CONFIRMED',
             text: 'Communication link terminated.',

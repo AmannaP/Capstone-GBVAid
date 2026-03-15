@@ -1,7 +1,7 @@
 <!-- login/logout.php -->
  
 <?php
-session_start();
+require_once '../settings/core.php';
 session_destroy();
 header('Location: ../');
 

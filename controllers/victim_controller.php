@@ -7,14 +7,8 @@ require_once '../classes/victim_class.php';
  */
 function login_victim_ctr($email, $password) {
     $victimObj = new Victim();
-    
-    // This calls the method in your victim_class.php
     $victim = $victimObj->verifyPassword($email, $password);
-
     if ($victim) {
-        // Note: It is usually better to set Sessions in the Action file 
-        // to keep the Controller "clean", but if you keep them here, 
-        // ensure the keys match your new 'victims' table columns.
         return $victim;
     }
     return false;
@@ -34,5 +28,13 @@ function get_victim_ctr($victim_id) {
 function update_victim_ctr($id, $name, $contact, $city, $country, $image = null) {
     $victim = new Victim();
     return $victim->update_victim($id, $name, $contact, $city, $country, $image);
+}
+
+/**
+ * Update Quick Exit URLs
+ */
+function update_quick_exit_ctr($id, $url1, $url2) {
+    $victim = new Victim();
+    return $victim->update_quick_exit($id, $url1, $url2);
 }
 ?>

@@ -91,11 +91,11 @@ class Service extends db_conn {
      * Get a single service by ID
      */
     public function get_one_service($id) {
-        // Prepare query (using join to get category/brand names if needed)
-        $sql = "SELECT p.*, c.cat_name, b.brand_name 
+        $sql = "SELECT p.*, c.cat_name, b.brand_name, v.sp_availability, v.sp_availability_note 
                 FROM services p
                 LEFT JOIN categories c ON p.service_cat = c.cat_id
                 LEFT JOIN brands b ON p.service_brand = b.brand_id
+                LEFT JOIN victim v ON p.service_cat = v.provider_category_id AND v.user_role = 3 AND v.sp_approved = 1
                 WHERE p.service_id = '$id'";
         
         return $this->db_fetch_one($sql);
@@ -150,10 +150,11 @@ class Service extends db_conn {
     }
     // Fetch services with filters and pagination
     public function getFilteredServices($search = '', $cat_id = 0, $brand_id = 0, $limit = 9, $offset = 0) {
-    $sql = "SELECT p.*, c.cat_name, b.brand_name 
+    $sql = "SELECT p.*, c.cat_name, b.brand_name, v.sp_availability, v.sp_availability_note 
             FROM services p
             LEFT JOIN categories c ON p.service_cat = c.cat_id
             LEFT JOIN brands b ON p.service_brand = b.brand_id
+            LEFT JOIN victim v ON p.service_cat = v.provider_category_id AND v.user_role = 3 AND v.sp_approved = 1
             WHERE 1=1";
     $params = [];
 

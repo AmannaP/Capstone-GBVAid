@@ -42,6 +42,10 @@ require_once '../settings/core.php';
 
 <div class="container monitor-container text-center">
     <h2 class="text-danger fw-bold mb-4">EMERGENCY DISPATCH MONITOR</h2>
+
+    <a href="dashboard.php" class="btn btn-danger px-5 py-3 rounded-pill shadow-lg fw-bold">
+        <i class="bi bi-arrow-left me-2"></i> BACK TO DASHBOARD
+    </a>
     
     <div class="status-box mb-4">
         <div class="spinner-grow text-success me-2" role="status" style="width: 1rem; height: 1rem;"></div>
@@ -67,10 +71,15 @@ require_once '../settings/core.php';
 let lastIncidentCount = 0;
 let currentActiveId = null;
 
-// Using a Base64 encoded "Beep" (No external file needed, will never fail)
+// Player Variables
+let audioQueue = [];
+let isPlayingAudio = false;
+let lastAudioId = 0;
+let audioPollInterval = null;
+let currentAudioNode = null;
+
+// Alert siren (Keeping the emergency Base64 Beep)
 const alertSound = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTtvT18=");
-const voiceStreamSim = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTtvT18=");
-voiceStreamSim.loop = true;
 
 function checkNewIncidents() {
     $.getJSON('../actions/get_active_sos_count.php')
@@ -121,13 +130,70 @@ function openEmergency(incidentId) {
         icon: 'info',
         background: '#1a1033',
         color: '#fff',
-        confirmButtonText: 'Mute Feed'
+        confirmButtonText: 'Mute Feed / Close Viewer'
     }).then(() => {
-        voiceStreamSim.pause();
+        clearInterval(audioPollInterval);
+        if (currentAudioNode) {
+            currentAudioNode.pause();
+        }
+        audioQueue = [];
+        isPlayingAudio = false;
     });
 
-    // Try to play audio separately so it doesn't block the UI
-    voiceStreamSim.play().catch(e => console.warn("Voice simulation muted."));
+    // Reset Audio logic
+    lastAudioId = 0;
+    audioQueue = [];
+    isPlayingAudio = false;
+    
+    // Start interval to fetch chunks
+    audioPollInterval = setInterval(() => fetchLiveAudio(incidentId), 4000);
+    // Fetch immediately
+    fetchLiveAudio(incidentId);
+}
+
+function fetchLiveAudio(incidentId) {
+    $.getJSON('../actions/get_incident_audio.php', { incident_id: incidentId, last_audio_id: lastAudioId })
+        .done(function(data) {
+            if (data.status === 'success' && data.chunks && data.chunks.length > 0) {
+                // Add chunks to queue
+                data.chunks.forEach(chunk => {
+                    audioQueue.push(chunk);
+                    lastAudioId = Math.max(lastAudioId, chunk.audio_id);
+                });
+                
+                // If not playing, start playing
+                if (!isPlayingAudio) {
+                    playNextChunk();
+                }
+            }
+        });
+}
+
+function playNextChunk() {
+    if (audioQueue.length === 0) {
+        isPlayingAudio = false;
+        return;
+    }
+    
+    isPlayingAudio = true;
+    const chunk = audioQueue.shift();
+    
+    // Create new audio instance for the chunk
+    currentAudioNode = new Audio('../uploads/sos_audio/' + chunk.audio_path);
+    
+    currentAudioNode.onended = () => {
+        playNextChunk();
+    };
+    
+    currentAudioNode.onerror = () => {
+        console.warn("Error playing audio chunk:", chunk.audio_path);
+        playNextChunk(); // Skip to next if this one fails
+    };
+    
+    currentAudioNode.play().catch(e => {
+        console.warn("Browser prevented autoplay:", e);
+        isPlayingAudio = false; // Could not play, reset state
+    });
 }
 
 function simulateArrival() {
@@ -140,7 +206,9 @@ function simulateArrival() {
 
     $.post('../actions/stop_sos.php', { incident_id: currentActiveId })
         .done(function(res) {
-            voiceStreamSim.pause();
+            clearInterval(audioPollInterval);
+            if (currentAudioNode) currentAudioNode.pause();
+            
             Swal.fire({ 
                 title: 'Arrival Confirmed', 
                 text: 'Incident closed successfully.',

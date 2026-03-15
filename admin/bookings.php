@@ -55,37 +55,37 @@ $categories = array_keys($categories);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #0f0a1e; background-image: radial-gradient(#3c2a61 1px, transparent 1px); background-size: 30px 30px; font-family: 'Poppins', sans-serif; color: #fff; }
         
         /* Admin Navbar */
-        .navbar-admin { background-color: #c453eaff; padding: 15px 0; }
-        .navbar-brand { color: white !important; font-weight: 800; }
+        .navbar-admin { background: rgba(26, 16, 51, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #3c2a61; padding: 15px 0; }
+        .navbar-brand { color: #e0aaff !important; font-weight: 800; }
         
-        /* FIX: Scope white text ONLY to navbar links, not tabs */
         .navbar-nav .nav-link { 
-            color: rgba(255,255,255,0.9) !important; 
+            color: rgba(255,255,255,0.8) !important; 
             font-weight: 500; 
         }
-        .navbar-nav .nav-link:hover { color: white !important; }
+        .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active { color: #d980ff !important; }
         
-        .btn-logout { border: 2px solid white; color: white; border-radius: 50px; font-weight: 700; text-decoration: none; padding: 5px 20px; }
-        .btn-logout:hover { background: white; color: #c453eaff; }
+        .btn-logout { border: 2px solid #bf40ff; color: #e0aaff; border-radius: 50px; font-weight: 700; text-decoration: none; padding: 5px 20px; }
+        .btn-logout:hover { background: #bf40ff; color: white; }
 
         /* Content */
         .content-card {
-            background: white;
+            background: rgba(26, 16, 51, 0.9);
+            border: 1px solid #3c2a61;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(191, 64, 255, 0.1);
             padding: 30px;
             margin-top: 30px;
             margin-bottom: 50px;
         }
 
-        /* Tabs Styling - Now Visible! */
-        .nav-tabs { border-bottom: 2px solid #eee; margin-bottom: 20px; }
+        /* Tabs Styling */
+        .nav-tabs { border-bottom: 2px solid #3c2a61; margin-bottom: 20px; }
         
         .nav-tabs .nav-link {
-            color: #666 !important; /* Force Grey for inactive tabs */
+            color: rgba(255, 255, 255, 0.5) !important;
             font-weight: 600;
             border: none;
             background: transparent;
@@ -94,32 +94,57 @@ $categories = array_keys($categories);
         }
         
         .nav-tabs .nav-link.active {
-            color: #c453eaff !important; /* Force Purple for active tab */
-            border-bottom: 3px solid #c453eaff;
+            color: #d980ff !important;
+            border-bottom: 3px solid #bf40ff;
+            background: transparent;
         }
         
-        .nav-tabs .nav-link:hover { color: #c453eaff !important; }
+        .nav-tabs .nav-link:hover { color: #e0aaff !important; }
 
         .table thead th {
-            background-color: #c453eaff;
-            color: white;
+            background: rgba(157, 78, 221, 0.3);
+            color: #e0aaff;
             border: none;
             padding: 15px;
         }
+        .table tbody td { color: #e0aaff; border-color: #3c2a61; padding: 12px 15px; vertical-align: middle; }
+        /* Override Bootstrap 5 table-hover CSS variable so rows don't flash white */
+        .table-hover > tbody > tr:hover > * { --bs-table-color: #f0d9ff; --bs-table-bg: rgba(191, 64, 255, 0.05); color: #f0d9ff; background-color: rgba(191, 64, 255, 0.05); }
+        /* Bootstrap 5 override for row base color */
+        .table > :not(caption) > * > * {
+            --bs-table-color: #e0aaff;
+            --bs-table-bg: transparent;
+            --bs-table-border-color: #3c2a61;
+            color: #e0aaff;
+            background-color: transparent;
+        }
         
         .status-badge { font-size: 0.8rem; padding: 5px 12px; border-radius: 50px; }
-        .bg-pending { background-color: #fff3cd; color: #856404; }
-        .bg-confirmed { background-color: #d1fae5; color: #065f46; }
-        .bg-cancelled { background-color: #f8d7da; color: #721c24; }
-        .bg-completed { background-color: #cce5ff; color: #004085; }
+        .bg-pending { background-color: rgba(255, 243, 205, 0.15); color: #ffc107; border: 1px solid #ffc107; }
+        .bg-confirmed { background-color: rgba(25, 135, 84, 0.2); color: #20c997; border: 1px solid #20c997; }
+        .bg-cancelled { background-color: rgba(220, 53, 69, 0.2); color: #ff6b6b; border: 1px solid #ff6b6b; }
+        .bg-completed { background-color: rgba(13, 202, 240, 0.2); color: #0dcaf0; border: 1px solid #0dcaf0; }
         
         .filter-select {
-            border: 2px solid #c453eaff;
-            color: #c453eaff;
+            border: 2px solid #bf40ff;
+            color: #e0aaff;
+            background: #0f0a1e;
             font-weight: 600;
             border-radius: 50px;
             padding-left: 20px;
         }
+        .filter-select:focus { box-shadow: 0 0 0 3px rgba(191, 64, 255, 0.3); }
+        .filter-select option { background: #1a1033; }
+
+        h3 { color: #e0aaff; }
+        p.text-muted { color: #c8a8e9 !important; }
+        .text-dark { color: #ffffff !important; }
+        .text-muted { color: #c8a8e9 !important; }
+        .text-secondary { color: #e0aaff !important; }
+        .modal-content { background: #1a1033; border: 1px solid #3c2a61; color: #fff; }
+        .modal-header { border-bottom-color: #3c2a61; }
+        .modal-footer { border-top-color: #3c2a61; }
+        .btn-secondary { background: #3c2a61; border: none; }
     </style>
 </head>
 <body>
@@ -134,7 +159,7 @@ $categories = array_keys($categories);
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item mx-2"><a href="dashboard.php" class="nav-link">Dashboard</a></li>
                 <li class="nav-item mx-2"><a href="bookings.php" class="nav-link active fw-bold">Bookings</a></li>
-                <li class="nav-item mx-2"><a href="services.php" class="nav-link">Services</a></li>
+                <li class="nav-item mx-2"><a href="service.php" class="nav-link">Services</a></li>
                 <li class="nav-item ms-4"><a href="../login/logout.php" class="btn-logout">Logout</a></li>
             </ul>
         </div>
@@ -145,12 +170,12 @@ $categories = array_keys($categories);
     <div class="content-card">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
             <div>
-                <h3 class="fw-bold mb-1" style="color: #c453eaff;">All Service Bookings</h3>
-                <p class="text-muted">Track user appointments, categories, and service providers.</p>
+                <h3 class="fw-bold mb-1" style="color: #e0aaff;">All Service Bookings</h3>
+                <p style="color: #c8a8e9;">Track user appointments, categories, and service providers.</p>
             </div>
             
             <div class="d-flex align-items-center">
-                <label class="me-2 fw-bold text-muted">Filter by:</label>
+                <label class="me-2 fw-bold" style="color: #e0aaff;">Filter by:</label>
                 <select id="categoryFilter" class="form-select filter-select" style="width: 250px;">
                     <option value="all">All Categories</option>
                     <?php foreach ($categories as $cat): ?>
@@ -163,12 +188,14 @@ $categories = array_keys($categories);
         <ul class="nav nav-tabs" id="bookingTab" role="tablist">
             <li class="nav-item">
                 <button class="nav-link active" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming" type="button">
-                    Upcoming <span class="badge bg-light text-dark ms-2"><?= count($upcoming) ?></span>
+                    <i class="bi bi-calendar-check me-1"></i>Upcoming
+                    <span class="ms-2" style="background: rgba(32,201,151,0.2); border: 1px solid #20c997; color: #20c997; border-radius: 50px; padding: 2px 10px; font-size: 0.8rem; font-weight: 700;"><?= count($upcoming) ?></span>
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button">
-                    History / Cancelled
+                    <i class="bi bi-clock-history me-1"></i>History / Cancelled
+                    <span class="ms-2" style="background: rgba(255,107,107,0.2); border: 1px solid #ff6b6b; color: #ff6b6b; border-radius: 50px; padding: 2px 10px; font-size: 0.8rem; font-weight: 700;"><?= count($history) ?></span>
                 </button>
             </li>
         </ul>
@@ -181,8 +208,8 @@ $categories = array_keys($categories);
                         <thead>
                             <tr>
                                 <th>Date & Time</th>
-                                <th>Victim</th>
-                                <th>Service / Service</th>
+                                <th>Client Name</th>
+                                <th>Service / Provider</th>
                                 <th>Category</th>
                                 <th>Note</th>
                                 <th>Status</th>
@@ -190,7 +217,7 @@ $categories = array_keys($categories);
                         </thead>
                         <tbody class="booking-list">
                             <?php if (empty($upcoming)): ?>
-                                <tr><td colspan="7" class="text-center py-5 text-muted">No upcoming bookings found.</td></tr>
+                                <tr><td colspan="7" class="text-center py-5" style="color: #c8a8e9;">No upcoming bookings found.</td></tr>
                             <?php else: ?>
                                 <?php foreach ($upcoming as $b): 
                                     $dateObj = new DateTime($b['appointment_date']);
@@ -199,19 +226,19 @@ $categories = array_keys($categories);
                                 ?>
                                 <tr class="booking-row" data-category="<?= htmlspecialchars($b['cat_name']) ?>">
                                     <td>
-                                        <div class="fw-bold text-dark"><?= $dateObj->format('M d, Y') ?></div>
-                                        <small class="text-muted"><?= $timeObj->format('h:i A') ?></small>
+                                        <div class="fw-bold" style="color: #e0aaff;"><?= $dateObj->format('M d, Y') ?></div>
+                                        <small style="color: #c8a8e9;"><?= $timeObj->format('h:i A') ?></small>
                                     </td>
                                     <td>
-                                        <div class="fw-bold"><?= htmlspecialchars($b['victim_name']) ?></div>
-                                        <small class="text-muted"><?= htmlspecialchars($b['victim_contact']) ?></small>
+                                        <div class="fw-bold" style="color: #e0aaff;"><?= htmlspecialchars($b['victim_name']) ?></div>
+                                        <small style="color: #c8a8e9;"><?= htmlspecialchars($b['victim_contact']) ?></small>
                                     </td>
                                     <td>
-                                        <?= htmlspecialchars($b['service_title']) ?><br>
-                                        <small class="text-muted"><i class="bi bi-building me-1"></i><?= htmlspecialchars($b['brand_name']) ?></small>
+                                        <span style="color: #e0aaff;"><?= htmlspecialchars($b['service_title']) ?></span><br>
+                                        <small style="color: #c8a8e9;"><i class="bi bi-building me-1"></i><?= htmlspecialchars($b['brand_name']) ?></small>
                                     </td>
                                     <td>
-                                        <span class="badge" style="background-color: #f3e8ff; color: #c453eaff;">
+                                        <span class="badge" style="background: rgba(191,64,255,0.25); color: #e0aaff; border: 1px solid rgba(191,64,255,0.5);">
                                             <?= htmlspecialchars($b['cat_name']) ?>
                                         </span>
                                     </td>
@@ -222,7 +249,7 @@ $categories = array_keys($categories);
                                                 View Note
                                             </button>
                                         <?php else: ?>
-                                            <span class="text-muted small">None</span>
+                                            <span style="color: #8a68b0;" class="small">None</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
@@ -242,8 +269,8 @@ $categories = array_keys($categories);
                         <thead>
                             <tr>
                                 <th>Date & Time</th>
-                                <th>Victim</th>
-                                <th>Service / Service</th>
+                                <th>Client Name</th>
+                                <th>Service / Provider</th>
                                 <th>Category</th>
                                 <th>Note</th>
                                 <th>Status</th>
@@ -251,7 +278,7 @@ $categories = array_keys($categories);
                         </thead>
                         <tbody class="booking-list">
                             <?php if (empty($history)): ?>
-                                <tr><td colspan="7" class="text-center py-5 text-muted">No past history found.</td></tr>
+                                <tr><td colspan="7" class="text-center py-5" style="color: #c8a8e9;">No past history found.</td></tr>
                             <?php else: ?>
                                 <?php foreach ($history as $b): 
                                     $dateObj = new DateTime($b['appointment_date']);
@@ -262,28 +289,28 @@ $categories = array_keys($categories);
                                 ?>
                                 <tr class="booking-row" data-category="<?= htmlspecialchars($b['cat_name']) ?>">
                                     <td>
-                                        <div class="text-muted fw-bold"><?= $dateObj->format('M d, Y') ?></div>
-                                        <small class="text-muted"><?= $timeObj->format('h:i A') ?></small>
+                                        <div class="fw-bold" style="color: #c8a8e9;"><?= $dateObj->format('M d, Y') ?></div>
+                                        <small style="color: #8a68b0;"><?= $timeObj->format('h:i A') ?></small>
                                     </td>
                                     <td>
-                                        <div class="text-secondary"><?= htmlspecialchars($b['victim_name']) ?></div>
+                                        <div style="color: #e0aaff;"><?= htmlspecialchars($b['victim_name']) ?></div>
                                     </td>
-                                    <td class="text-muted">
+                                    <td style="color: #c8a8e9;">
                                         <?= htmlspecialchars($b['service_title']) ?>
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-secondary border">
+                                        <span class="badge" style="background: rgba(100,80,140,0.3); color: #c8a8e9; border: 1px solid rgba(150,120,200,0.4);">
                                             <?= htmlspecialchars($b['cat_name']) ?>
                                         </span>
                                     </td>
                                     <td>
                                         <?php if(!empty($b['notes'])): ?>
-                                            <button type="button" class="btn btn-sm btn-light text-secondary border rounded-pill px-3" 
+                                            <button type="button" class="btn btn-sm rounded-pill px-3" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(200,168,233,0.3); color: #c8a8e9;"
                                                     onclick="showNote('<?= htmlspecialchars(addslashes($b['notes'])) ?>')">
                                                 View Note
                                             </button>
                                         <?php else: ?>
-                                            <span class="text-muted small">None</span>
+                                            <span style="color: #8a68b0;" class="small">None</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>

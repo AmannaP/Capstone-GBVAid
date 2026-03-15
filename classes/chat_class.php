@@ -108,8 +108,6 @@ class Chat extends db_conn {
 
             if (!$suggestion) {
                 throw new Exception("No pending suggestion found.");
-                $this->db->rollBack();
-                return false; // No pending suggestion found
             }
 
             // Create the new group

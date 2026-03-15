@@ -1,27 +1,31 @@
 <?php
 // 1. Session & Cart/Booking Logic
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// $cart_count = 0;
-// // Check for cart controller to fetch booking count
-// $controller_path = dirname(__DIR__) . '/controllers/cart_controller.php';
-// if (file_exists($controller_path)) {
-//     require_once($controller_path);
-//     $uid = isset($_SESSION['id']) ? $_SESSION['id'] : null;
-//     $ip_addr = $_SERVER['REMOTE_ADDR'];
-    
-//     // Fetch items (Bookings)
-//     $c_items = get_user_cart_ctr($uid ?? $ip_addr);
-//     if ($c_items) {
-//         $cart_count = count($c_items);
-//     }
-// }
+require_once __DIR__ . '/../settings/core.php';
 
 // User State
 $is_logged_in = isset($_SESSION['id']);
 $victim_name = $is_logged_in ? ($_SESSION['name'] ?? 'User') : 'Guest';
+
+// Quick Exit URLs: load from session or fall back to safe defaults
+if ($is_logged_in && !isset($_SESSION['quick_exit_url1'])) {
+    try {
+        require_once __DIR__ . '/../settings/db_class.php';
+        $dbTmp = new db_conn();
+        if ($dbTmp->db_connect()) {
+            $stmtTmp = $dbTmp->db->prepare("SELECT quick_exit_url1, quick_exit_url2 FROM victim WHERE victim_id = ?");
+            $stmtTmp->execute([$_SESSION['id']]);
+            $exitRow = $stmtTmp->fetch(PDO::FETCH_ASSOC);
+            $_SESSION['quick_exit_url1'] = $exitRow['quick_exit_url1'] ?? '';
+            $_SESSION['quick_exit_url2'] = $exitRow['quick_exit_url2'] ?? '';
+        }
+    } catch (Exception $e) {
+        $_SESSION['quick_exit_url1'] = '';
+        $_SESSION['quick_exit_url2'] = '';
+    }
+}
+
+$exit_url1 = !empty($_SESSION['quick_exit_url1']) ? $_SESSION['quick_exit_url1'] : 'https://weather.com';
+$exit_url2 = !empty($_SESSION['quick_exit_url2']) ? $_SESSION['quick_exit_url2'] : 'https://www.bbc.com/news';
 ?>
 
 <style>
@@ -51,7 +55,6 @@ $victim_name = $is_logged_in ? ($_SESSION['name'] ?? 'User') : 'Guest';
         transform: translateY(-1px);
     }
 
-    /* Badge for Bookings */
     .badge-notification {
         background-color: #bf40ff;
         color: white;
@@ -59,7 +62,6 @@ $victim_name = $is_logged_in ? ($_SESSION['name'] ?? 'User') : 'Guest';
         font-weight: 800;
     }
 
-    /* Safety Mask Exit Button */
     .btn-quick-exit {
         background-color: #ff4d4d;
         color: white !important;
@@ -69,6 +71,7 @@ $victim_name = $is_logged_in ? ($_SESSION['name'] ?? 'User') : 'Guest';
         border: 2px solid #ff4d4d;
         margin-left: 15px;
         animation: pulse-red-small 2s infinite;
+        cursor: pointer;
     }
     
     .btn-quick-exit:hover {
@@ -82,7 +85,6 @@ $victim_name = $is_logged_in ? ($_SESSION['name'] ?? 'User') : 'Guest';
         100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
     }
 
-    /* Dropdown Styling */
     .dropdown-menu {
         background-color: #1a1033;
         border: 1px solid #bf40ff;
@@ -100,7 +102,6 @@ $victim_name = $is_logged_in ? ($_SESSION['name'] ?? 'User') : 'Guest';
         color: white; 
     }
 
-    /* Auth Buttons */
     .btn-auth {
         border-radius: 50px;
         padding: 6px 20px;
@@ -137,17 +138,6 @@ $victim_name = $is_logged_in ? ($_SESSION['name'] ?? 'User') : 'Guest';
                 <li class="nav-item"><a class="nav-link" href="../user/dashboard.php">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="../user/service_page.php">Services</a></li>
                 
-                <!-- <li class="nav-item position-relative">
-                    <a class="nav-link" href="#">Bookings
-                        <i class="bi bi-calendar-check me-1"></i> Bookings
-                        <?php if ($cart_count > 0): ?>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-notification">
-                                <?= $cart_count ?>
-                            </span>
-                        <?php endif; ?>
-                    </a>
-                </li> -->
-
                 <li class="nav-item d-none d-lg-block mx-2">
                     <div style="border-left: 1px solid rgba(191,64,255,0.3); height: 20px;"></div>
                 </li>
@@ -156,7 +146,6 @@ $victim_name = $is_logged_in ? ($_SESSION['name'] ?? 'User') : 'Guest';
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                             <?php
-                                // Avatar Logic
                                 $user_img_path = "https://ui-avatars.com/api/?name=" . urlencode($_SESSION['name']) . "&background=bf40ff&color=fff&bold=true";
                                 if (isset($_SESSION['user_image']) && !empty($_SESSION['user_image'])) {
                                     $img_name = $_SESSION['user_image'];
@@ -186,9 +175,26 @@ $victim_name = $is_logged_in ? ($_SESSION['name'] ?? 'User') : 'Guest';
                 <?php endif; ?>
 
                 <li class="nav-item">
-                    <a href="https://wellfitinsider.com/fitness-club-guides/best-online-workout-programs/" class="nav-link btn-quick-exit">QUICK EXIT</a>
+                    <a id="quickExitBtn" href="#" class="nav-link btn-quick-exit" onclick="triggerQuickExit(event)">&#9889; QUICK EXIT</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
+
+<script>
+    // Quick Exit: randomly alternates between user's two configured URLs
+    var _exitUrls = [
+        "<?= addslashes($exit_url1) ?>",
+        "<?= addslashes($exit_url2) ?>"
+    ].filter(function(u){ return u && u.trim().length > 0; });
+
+    function triggerQuickExit(e) {
+        e.preventDefault();
+        var chosen = _exitUrls.length > 0
+            ? _exitUrls[Math.floor(Math.random() * _exitUrls.length)]
+            : 'https://weather.com';
+        // Replace so back button doesn't return to GBVAid
+        window.location.replace(chosen);
+    }
+</script>

@@ -8,7 +8,9 @@ $(document).ready(function () {
                 icon: "error",
                 title: "Invalid Input",
                 text: "Category name must be at least 2 characters long.",
-                confirmButtonColor: "#b77a7a"
+                confirmButtonColor: "#bf40ff",
+                background: "#1a1033",
+                color: "#fff"
             });
             return false;
         }
@@ -27,27 +29,29 @@ $(document).ready(function () {
 
                 if (response.status !== "success" || !response.categories || response.categories.length === 0) {
                     tableBody.append(
-                        `<tr><td colspan='4' class='text-center text-muted'>No service categories found yet.</td></tr>`
+                        `<tr><td colspan='3' class='text-center py-4' style='color:#8a68b0;'>No service categories found yet.</td></tr>`
                     );
                     return;
                 }
 
                 response.categories.forEach((cat) => {
                     tableBody.append(`
-                        <tr>
-                            <td>${cat.cat_id}</td>
-                            <td>${cat.cat_name}</td>
-                            <td>
-                                <button class="btn btn-warning btn-sm update-btn" 
-                                        data-id="${cat.cat_id}" 
-                                        data-name="${cat.cat_name}">
-                                    Edit
-                                </button>
+                        <tr style="border-color: #3c2a61;">
+                            <td class="text-center" style="color: #c8a8e9; font-weight: 600;">${cat.cat_id}</td>
+                            <td style="color: #ffffff; font-weight: 500;">
+                                <i class="bi bi-tag-fill me-2" style="color: #bf40ff;"></i>${cat.cat_name}
                             </td>
-                            <td>
-                                <button class="btn btn-danger btn-sm delete-btn" 
+                            <td class="text-center">
+                                <button class="btn btn-sm update-btn me-1"
+                                        style="background: rgba(191,64,255,0.15); border: 1px solid #bf40ff; color: #e0aaff; border-radius: 50px; padding: 4px 14px;"
+                                        data-id="${cat.cat_id}"
+                                        data-name="${cat.cat_name}">
+                                    <i class="bi bi-pencil-fill me-1"></i>Edit
+                                </button>
+                                <button class="btn btn-sm delete-btn"
+                                        style="background: rgba(220,53,69,0.15); border: 1px solid rgba(220,53,69,0.5); color: #ff6b6b; border-radius: 50px; padding: 4px 14px;"
                                         data-id="${cat.cat_id}">
-                                    Delete
+                                    <i class="bi bi-trash-fill me-1"></i>Delete
                                 </button>
                             </td>
                         </tr>
@@ -60,7 +64,9 @@ $(document).ready(function () {
                     icon: "error",
                     title: "Error",
                     text: "Failed to load service categories.",
-                    confirmButtonColor: "#b77a7a"
+                    confirmButtonColor: "#bf40ff",
+                    background: "#1a1033",
+                    color: "#fff"
                 });
             }
         });
@@ -87,17 +93,21 @@ $(document).ready(function () {
                         icon: "success",
                         title: "Added!",
                         text: response.message || "Service category added successfully.",
-                        confirmButtonColor: "#b77a7a"
+                        confirmButtonColor: "#bf40ff",
+                        background: "#1a1033",
+                        color: "#fff"
                     }).then(() => {
                         $("#cat_name").val("");
-                        fetchCategories(); // 🔁 reload categories
+                        fetchCategories();
                     });
                 } else {
                     Swal.fire({
                         icon: "error",
                         title: "Error",
                         text: response.message || "Failed to add category (maybe duplicate?)",
-                        confirmButtonColor: "#b77a7a"
+                        confirmButtonColor: "#bf40ff",
+                        background: "#1a1033",
+                        color: "#fff"
                     });
                 }
             },
@@ -107,7 +117,9 @@ $(document).ready(function () {
                     icon: "error",
                     title: "Server Error",
                     text: "Something went wrong on the server.",
-                    confirmButtonColor: "#b77a7a"
+                    confirmButtonColor: "#bf40ff",
+                    background: "#1a1033",
+                    color: "#fff"
                 });
             }
         });
@@ -125,7 +137,9 @@ $(document).ready(function () {
             inputValue: oldName,
             showCancelButton: true,
             confirmButtonText: "Update",
-            confirmButtonColor: "#b77a7a"
+            confirmButtonColor: "#bf40ff",
+            background: "#1a1033",
+            color: "#fff"
         }).then((result) => {
             if (result.isConfirmed && validateCategoryName(result.value)) {
                 $.ajax({
@@ -139,23 +153,29 @@ $(document).ready(function () {
                                 icon: "success",
                                 title: "Updated!",
                                 text: response.message || "Category updated successfully.",
-                                confirmButtonColor: "#b77a7a"
+                                confirmButtonColor: "#bf40ff",
+                                background: "#1a1033",
+                                color: "#fff"
                             }).then(() => fetchCategories());
                         } else {
                             Swal.fire({
                                 icon: "error",
                                 title: "Error",
                                 text: response.message || "Failed to update category.",
-                                confirmButtonColor: "#b77a7a"
+                                confirmButtonColor: "#bf40ff",
+                                background: "#1a1033",
+                                color: "#fff"
                             });
-                            }
+                        }
                     },
                     error: function () {
                         Swal.fire({
                             icon: "error",
                             title: "Server Error",
                             text: "Could not update category.",
-                            confirmButtonColor: "#b77a7a"
+                            confirmButtonColor: "#bf40ff",
+                            background: "#1a1033",
+                            color: "#fff"
                         });
                     }
                 });
@@ -168,13 +188,15 @@ $(document).ready(function () {
         const cat_id = $(this).data("id");
 
         Swal.fire({
-            title: "Are you sure?",
+            title: "Delete this category?",
             text: "This category will be permanently deleted!",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: "#b77a7a",
-            cancelButtonColor: "#6c757d",
-            confirmButtonText: "Yes, delete it!"
+            confirmButtonColor: "#dc3545",
+            cancelButtonColor: "#3c2a61",
+            confirmButtonText: "Yes, delete it!",
+            background: "#1a1033",
+            color: "#fff"
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
@@ -188,14 +210,18 @@ $(document).ready(function () {
                                 icon: "success",
                                 title: "Deleted!",
                                 text: response.message || "Category deleted successfully.",
-                                confirmButtonColor: "#b77a7a"
+                                confirmButtonColor: "#bf40ff",
+                                background: "#1a1033",
+                                color: "#fff"
                             }).then(() => fetchCategories());
                         } else {
                             Swal.fire({
                                 icon: "error",
                                 title: "Error",
                                 text: response.message || "Failed to delete category.",
-                                confirmButtonColor: "#b77a7a"
+                                confirmButtonColor: "#bf40ff",
+                                background: "#1a1033",
+                                color: "#fff"
                             });
                         }
                     },
@@ -204,7 +230,9 @@ $(document).ready(function () {
                             icon: "error",
                             title: "Server Error",
                             text: "Failed to delete category.",
-                            confirmButtonColor: "#b77a7a"
+                            confirmButtonColor: "#bf40ff",
+                            background: "#1a1033",
+                            color: "#fff"
                         });
                     }
                 });

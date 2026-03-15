@@ -59,7 +59,8 @@ function filter_services_by_brand_ctr($brand_id) {
 }
 
 function update_service_image_ctr($service_id, $image_path) {
-    return update_service_image_cls($service_id, $image_path);
+    $p = new service();
+    return $p->updateServiceImage($service_id, $image_path);
 }
 
 function delete_service_ctr($service_id) {

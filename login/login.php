@@ -137,6 +137,9 @@
                             <div class="mb-4">
                                 <label for="password" class="form-label"><i class="fa fa-lock"></i> Password</label>
                                 <input type="password" class="form-control animate__animated animate__fadeInUp" id="password" name="password" placeholder="Enter your password" required>
+                                <div class="mt-2 text-end">
+                                    <a href="forgot_password.php" class="highlight small">Forgot Password?</a>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-custom w-100 animate-pulse-custom">Login to Platform</button>
                         </form>

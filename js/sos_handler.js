@@ -2,13 +2,15 @@
  * SOS Emergency Handler for GBVAid
  */
 $(document).ready(function() {
+    let mediaRecorder;
+
     $('.emergency-btn').on('click', function() {
         const btn = $(this);
         const originalHtml = btn.html();
 
         Swal.fire({
             title: 'CONFIRM EMERGENCY',
-            text: "This will send your location to emergency responders.",
+            text: "This will send your location and live background audio to responders.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ff4d4d',
@@ -46,18 +48,21 @@ $(document).ready(function() {
                                 // Save ID globally for the stopSharing function
                                 window.currentIncidentId = res.incident_id;
 
+                                // Start recording audio securely
+                                startAudioRecording(window.currentIncidentId);
+
                                 // UI Updates
                                 btn.addClass('pulse-red').css({
                                     'background': '#ff0000',
                                     'box-shadow': '0 0 20px rgba(255, 0, 0, 0.6)'
-                                }).html('<i class="bi bi-broadcast"></i> SIGNAL LIVE');
+                                }).html('<i class="bi bi-broadcast"></i> SIGNAL LIVE & RECORDING');
                                 
                                 $('#stop-sharing-zone').fadeIn();
 
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'SOS SIGNAL SENT',
-                                    text: "Help is being dispatched to your location.",
+                                    text: "Help is dispatched. Background audio is actively being recorded.",
                                     background: '#1a1033',
                                     color: '#fff',
                                     confirmButtonColor: '#ff4d4d'
@@ -81,10 +86,65 @@ $(document).ready(function() {
         }
     }
 
-    // Fixed stopSharing - No longer requires a 'reason' dropdown
+    // Initialize MediaRecorder and transmit 10-second chunks
+    function startAudioRecording(incidentId) {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function(stream) {
+                // Initialize MediaRecorder
+                mediaRecorder = new MediaRecorder(stream);
+                
+                // Event fires every time a chunk is ready
+                mediaRecorder.ondataavailable = function(e) {
+                    if (e.data.size > 0) {
+                        sendAudioChunk(e.data, incidentId);
+                    }
+                };
+                
+                // Start recording, chunking every 10 seconds (10000ms)
+                mediaRecorder.start(10000); 
+            })
+            .catch(function(err) {
+                console.error("Microphone access denied or error:", err);
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'warning',
+                    title: 'Mic access blocked. Audio disabled.',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            });
+        } else {
+            console.warn("Media devices not supported by this browser.");
+        }
+    }
+
+    // Ajax call to send the blob to the server
+    function sendAudioChunk(blob, incidentId) {
+        const formData = new FormData();
+        formData.append('audio_data', blob);
+        formData.append('incident_id', incidentId);
+        
+        $.ajax({
+            url: '../actions/sos_audio_action.php',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(res) {
+                console.log("Audio chunk safely transmitted");
+            },
+            error: function(err) {
+                console.error("Failed to transmit audio chunk", err);
+            }
+        });
+    }
+
+    // Stop Sharing / Terminate Incident
     window.stopSharing = function() {
         Swal.fire({
-            title: 'Stop Sharing Location?',
+            title: 'Stop Sharing Location & Audio?',
             text: "Are you safe now?",
             icon: 'question',
             showCancelButton: true,
@@ -93,6 +153,13 @@ $(document).ready(function() {
             color: '#fff'
         }).then((result) => {
             if (result.isConfirmed) {
+                // Terminate recording safely
+                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                    mediaRecorder.stop();
+                    // Terminate all audio tracks to free the mic
+                    mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                }
+
                 $.post('../actions/stop_sos.php', { incident_id: window.currentIncidentId }, function() {
                     location.reload(); // Reset the dashboard
                 });

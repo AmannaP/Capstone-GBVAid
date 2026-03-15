@@ -8,6 +8,9 @@ $(document).ready(function () {
                 icon: "error",
                 title: "Invalid Input",
                 text: "Brand name must be at least 2 characters long.",
+                confirmButtonColor: "#bf40ff",
+                background: "#1a1033",
+                color: "#fff"
             });
             return false;
         }
@@ -16,6 +19,9 @@ $(document).ready(function () {
                 icon: "error",
                 title: "Missing Category",
                 text: "Please select a category for this brand.",
+                confirmButtonColor: "#bf40ff",
+                background: "#1a1033",
+                color: "#fff"
             });
             return false;
         }
@@ -35,27 +41,37 @@ $(document).ready(function () {
                 if (res.status === "success" && res.brands.length > 0) {
                     res.brands.forEach((b) => {
                         tbody.append(`
-                            <tr>
-                                <td>${b.brand_id}</td>
-                                <td>${b.brand_name}</td>
-                                <td>${b.cat_name ?? "—"}</td>
+                            <tr style="border-color: #3c2a61;">
+                                <td style="color: #c8a8e9; font-weight: 600;">${b.brand_id}</td>
+                                <td style="color: #ffffff; font-weight: 500;">
+                                    <i class="bi bi-building me-2" style="color: #bf40ff;"></i>${b.brand_name}
+                                </td>
                                 <td>
-                                    <button class="btn btn-warning btn-sm update-btn" data-id="${b.brand_id}" data-name="${b.brand_name}">
-                                        Update
+                                    <span style="background: rgba(191,64,255,0.15); border: 1px solid rgba(191,64,255,0.3); color: #e0aaff; border-radius: 50px; padding: 3px 12px; font-size: 0.82rem;">
+                                        ${b.cat_name ?? "—"}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm update-btn me-1"
+                                            style="background: rgba(191,64,255,0.15); border: 1px solid #bf40ff; color: #e0aaff; border-radius: 50px; padding: 4px 14px;"
+                                            data-id="${b.brand_id}" data-name="${b.brand_name}">
+                                        <i class="bi bi-pencil-fill me-1"></i>Edit
                                     </button>
-                                    <button class="btn btn-danger btn-sm delete-btn" data-id="${b.brand_id}">
-                                        Delete
+                                    <button class="btn btn-sm delete-btn"
+                                            style="background: rgba(220,53,69,0.15); border: 1px solid rgba(220,53,69,0.5); color: #ff6b6b; border-radius: 50px; padding: 4px 14px;"
+                                            data-id="${b.brand_id}">
+                                        <i class="bi bi-trash-fill me-1"></i>Delete
                                     </button>
                                 </td>
                             </tr>
                         `);
                     });
                 } else {
-                    tbody.append(`<tr><td colspan="4" class="text-center text-muted">No brands found.</td></tr>`);
+                    tbody.append(`<tr><td colspan="4" class="text-center py-4" style="color: #8a68b0;">No brands found.</td></tr>`);
                 }
             },
             error: function () {
-                Swal.fire("Error", "Failed to load brands.", "error");
+                Swal.fire({ icon: "error", title: "Error", text: "Failed to load brands.", confirmButtonColor: "#bf40ff", background: "#1a1033", color: "#fff" });
             },
         });
     }
@@ -78,16 +94,16 @@ $(document).ready(function () {
             data: { brand_name, cat_id: category_id },
             success: function (res) {
                 if (res.status === "success") {
-                    Swal.fire("Success", res.message, "success").then(() => {
+                    Swal.fire({ icon: "success", title: "Success", text: res.message, confirmButtonColor: "#bf40ff", background: "#1a1033", color: "#fff" }).then(() => {
                         $("#add-brand-form")[0].reset();
                         fetchBrands();
                     });
                 } else {
-                    Swal.fire("Error", res.message, "error");
+                    Swal.fire({ icon: "error", title: "Error", text: res.message, confirmButtonColor: "#bf40ff", background: "#1a1033", color: "#fff" });
                 }
             },
             error: function () {
-                Swal.fire("Error", "Server error occurred.", "error");
+                Swal.fire({ icon: "error", title: "Server Error", text: "Server error occurred.", confirmButtonColor: "#bf40ff", background: "#1a1033", color: "#fff" });
             },
         });
     });
@@ -104,6 +120,9 @@ $(document).ready(function () {
             inputValue: oldName,
             showCancelButton: true,
             confirmButtonText: "Update",
+            confirmButtonColor: "#bf40ff",
+            background: "#1a1033",
+            color: "#fff",
             preConfirm: (value) => {
                 if (!value || value.trim().length < 2) {
                     Swal.showValidationMessage("Please enter a valid brand name (at least 2 characters)");
@@ -118,19 +137,18 @@ $(document).ready(function () {
                     data: { brand_id: brand_id, brand_name: result.value.trim() },
                     success: function (res) {
                         if (res.status === "success") {
-                            Swal.fire("Updated!", res.message, "success").then(fetchBrands);
+                            Swal.fire({ icon: "success", title: "Updated!", text: res.message, confirmButtonColor: "#bf40ff", background: "#1a1033", color: "#fff" }).then(fetchBrands);
                         } else {
-                            Swal.fire("Error", res.message, "error");
+                            Swal.fire({ icon: "error", title: "Error", text: res.message, confirmButtonColor: "#bf40ff", background: "#1a1033", color: "#fff" });
                         }
                     },
                     error: function () {
-                        Swal.fire("Error", "Server error occurred.", "error");
+                        Swal.fire({ icon: "error", title: "Error", text: "Server error occurred.", confirmButtonColor: "#bf40ff", background: "#1a1033", color: "#fff" });
                     }
                 });
             }
         });
     });
-
 
     // DELETE brand
     $(document).on("click", ".delete-btn", function () {
@@ -140,8 +158,11 @@ $(document).ready(function () {
             title: "Delete this brand?",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: "#d33",
+            confirmButtonColor: "#dc3545",
+            cancelButtonColor: "#3c2a61",
             confirmButtonText: "Yes, delete it",
+            background: "#1a1033",
+            color: "#fff"
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
@@ -151,13 +172,13 @@ $(document).ready(function () {
                     data: { brand_id },
                     success: function (res) {
                         if (res.status === "success") {
-                            Swal.fire("Deleted!", res.message, "success").then(fetchBrands);
+                            Swal.fire({ icon: "success", title: "Deleted!", text: res.message, confirmButtonColor: "#bf40ff", background: "#1a1033", color: "#fff" }).then(fetchBrands);
                         } else {
-                            Swal.fire("Error", res.message, "error");
+                            Swal.fire({ icon: "error", title: "Error", text: res.message, confirmButtonColor: "#bf40ff", background: "#1a1033", color: "#fff" });
                         }
                     },
                     error: function () {
-                        Swal.fire("Error", "Server error occurred.", "error");
+                        Swal.fire({ icon: "error", title: "Error", text: "Server error occurred.", confirmButtonColor: "#bf40ff", background: "#1a1033", color: "#fff" });
                     },
                 });
             }

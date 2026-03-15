@@ -10,15 +10,10 @@ class Victim extends db_conn {
     // classes/victim_class.php
 
     public function getVictimByEmail($email) {
-        // We use the PDO connection directly ($this->db) to bypass any db_class quirks
         $sql = "SELECT * FROM victim WHERE victim_email = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // DEBUG: If you want to see if the database actually found the user
-        // error_log("Database result for $email: " . print_r($user, true));
-
         return $user;
     }
 
@@ -26,12 +21,9 @@ class Victim extends db_conn {
         $victim = $this->getVictimByEmail($email);
         
         if (!$victim) {
-            // This means the email itself wasn't found
             return false; 
         }
 
-        // Double check: is the column 'victim_pass' or 'victim_password'?
-        // We'll check both just to be safe
         $hash = $victim['victim_pass'] ?? $victim['victim_password'] ?? null;
 
         if ($hash && password_verify($password, $hash)) {
@@ -40,21 +32,6 @@ class Victim extends db_conn {
         
         return false;
     }
-
-    // /**
-    //  * Verify Password
-    //  */
-    // public function verifyPassword($email, $password) {
-    //     $victim = $this->getVictimByEmail($email);
-        
-    //     if ($victim) {
-    //         // Check the hashed password from the database
-    //         if (password_verify($password, $victim['victim_pass'])) {
-    //             return $victim; 
-    //         }
-    //     }
-    //     return false;
-    // }
 
     /**
      * Get Victim by ID
@@ -91,6 +68,14 @@ class Victim extends db_conn {
         }
         
         return $this->db_write_query($sql, $params);
+    }
+
+    /**
+     * Update Quick Exit URLs
+     */
+    public function update_quick_exit($id, $url1, $url2) {
+        $sql = "UPDATE victim SET quick_exit_url1 = ?, quick_exit_url2 = ? WHERE victim_id = ?";
+        return $this->db_write_query($sql, [$url1, $url2, $id]);
     }
 }
 ?>

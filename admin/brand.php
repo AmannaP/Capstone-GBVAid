@@ -28,37 +28,40 @@ $categories = fetch_categories_ctr();
 
     <style>
         body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f0a1e;
+            background-image: radial-gradient(#3c2a61 1px, transparent 1px);
+            background-size: 30px 30px;
+            font-family: 'Poppins', sans-serif;
+            color: #ffffff;
         }
 
         /* Admin Navbar */
         .navbar-admin {
-            background-color: #c453eaff;
-            box-shadow: 0 4px 12px rgba(196, 83, 234, 0.3);
+            background: rgba(26, 16, 51, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #3c2a61;
             padding: 15px 0;
         }
 
         .navbar-brand {
             font-weight: 800;
-            color: #fff !important;
+            color: #e0aaff !important;
             font-size: 1.5rem;
         }
 
         .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
+            color: rgba(255, 255, 255, 0.8) !important;
             font-weight: 500;
             transition: all 0.3s;
         }
-        .nav-link:hover {
-            color: #fff !important;
-            transform: translateY(-2px);
+        .nav-link:hover, .nav-link.active {
+            color: #d980ff !important;
         }
 
         .btn-logout {
-            background-color: white;
-            color: #c453eaff;
-            border: 2px solid white;
+            background-color: transparent;
+            color: #e0aaff;
+            border: 2px solid #bf40ff;
             border-radius: 50px;
             padding: 5px 20px;
             font-weight: 700;
@@ -66,24 +69,25 @@ $categories = fetch_categories_ctr();
             transition: all 0.3s;
         }
         .btn-logout:hover {
-            background-color: transparent;
+            background-color: #bf40ff;
             color: white;
         }
 
         /* Cards */
         .content-card {
-            border: none;
+            border: 1px solid #3c2a61;
             border-radius: 15px;
-            background: white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            background: rgba(26, 16, 51, 0.9);
+            box-shadow: 0 4px 20px rgba(191, 64, 255, 0.1);
             margin-bottom: 30px;
-            overflow: hidden; /* For table header */
+            overflow: hidden;
         }
 
         .card-header-custom {
-            background-color: white;
-            border-bottom: 2px solid #f0f0f0;
+            background-color: rgba(191, 64, 255, 0.1);
+            border-bottom: 1px solid #3c2a61;
             padding: 20px 30px;
+            color: #e0aaff;
         }
 
         .card-body {
@@ -94,17 +98,24 @@ $categories = fetch_categories_ctr();
         .form-control, .form-select {
             padding: 12px;
             border-radius: 8px;
-            border: 1px solid #dee2e6;
+            border: 1px solid #3c2a61;
+            background-color: #0f0a1e;
+            color: #fff;
         }
         .form-control:focus, .form-select:focus {
-            border-color: #c453eaff;
-            box-shadow: 0 0 0 4px rgba(196, 83, 234, 0.1);
+            border-color: #bf40ff;
+            box-shadow: 0 0 0 4px rgba(191, 64, 255, 0.2);
+            background-color: #150d2b;
+            color: #fff;
         }
+        .form-control::placeholder, .form-select::placeholder { color: #6c4898; opacity: 1; }
+        .form-label { color: #d980ff; font-weight: 500; }
+        select option { background-color: #1a1033; }
 
         /* Table Styling */
         .table thead th {
-            background-color: #c453eaff;
-            color: white;
+            background: rgba(157, 78, 221, 0.3);
+            color: #e0aaff;
             font-weight: 600;
             border: none;
             padding: 15px;
@@ -112,31 +123,50 @@ $categories = fetch_categories_ctr();
         .table tbody td {
             padding: 15px;
             vertical-align: middle;
-            color: #555;
+            color: #ffffff;
+            border-color: #3c2a61;
         }
-        .table-striped tbody tr:nth-of-type(odd) {
-            background-color: rgba(196, 83, 234, 0.02);
+        .table tbody tr { background: transparent; }
+        .table tbody tr:hover { background: rgba(191, 64, 255, 0.07); }
+        /* Override Bootstrap 5 striped table variable */
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            --bs-table-color: #ffffff;
+            --bs-table-bg: rgba(60, 42, 97, 0.2);
+            --bs-table-striped-color: #ffffff;
+            --bs-table-striped-bg: rgba(60, 42, 97, 0.2);
+            background-color: rgba(60, 42, 97, 0.2);
+            color: #ffffff;
+        }
+        .table-striped > tbody > tr:nth-of-type(even) > * {
+            --bs-table-color: #ffffff;
+            --bs-table-bg: transparent;
+            background-color: transparent;
+            color: #ffffff;
         }
 
         /* Buttons */
         .btn-purple {
-            background-color: #c453eaff;
+            background: linear-gradient(135deg, #9d4edd 0%, #bf40ff 100%);
             border: none;
-            border-radius: 8px;
-            padding: 12px 30px;
+            border-radius: 50px;
+            padding: 10px 30px;
             font-weight: 600;
             color: white;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(191, 64, 255, 0.3);
         }
         .btn-purple:hover {
-            background-color: #a020f0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(191, 64, 255, 0.5);
             color: white;
         }
 
         .btn-action {
-            border-radius: 6px;
-            padding: 6px 12px;
+            border-radius: 50px;
+            padding: 5px 15px;
         }
+
+        .page-title { color: #e0aaff; font-weight: 800; }
     </style>
 </head>
 <body>
@@ -170,8 +200,8 @@ $categories = fetch_categories_ctr();
                 
                 <!-- Page Header -->
                 <div class="text-center mb-5">
-                    <h2 class="fw-bold" style="color: #c453eaff;">Brand Management</h2>
-                    <p class="text-muted">Create and manage service providers or sub-categories.</p>
+                    <h2 class="fw-bold page-title">Brand Management</h2>
+                    <p style="color: #c8a8e9;">Create and manage service providers or sub-categories.</p>
                 </div>
 
                 <!-- CREATE FORM -->
@@ -183,11 +213,11 @@ $categories = fetch_categories_ctr();
                         <form id="add-brand-form">
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label for="brand_name" class="form-label fw-bold small text-muted">Brand Name</label>
+                                    <label for="brand_name" class="form-label fw-bold small" style="color: #d980ff;">Brand Name</label>
                                     <input type="text" id="brand_name" name="brand_name" class="form-control" placeholder="e.g., Trauma Therapy, Legal Consult" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="category_id" class="form-label fw-bold small text-muted">Select Category</label>
+                                    <label for="category_id" class="form-label fw-bold small" style="color: #d980ff;">Select Category</label>
                                     <select id="category_id" name="category_id" class="form-select" required>
                                         <option value="">-- Select Category --</option>
                                         <?php foreach ($categories as $cat): ?>

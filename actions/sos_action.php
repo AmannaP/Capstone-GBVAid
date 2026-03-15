@@ -3,11 +3,6 @@
 require_once '../settings/core.php';
 require_once '../controllers/incident_controller.php';
 
-// Ensure session is started if core.php doesn't do it
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -25,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result) {
             echo json_encode([
                 "status" => "success", 
+                "incident_id" => $result,
                 "message" => "SOS Signal Transmitted. Help is being dispatched to your location."
             ]);
         } else {

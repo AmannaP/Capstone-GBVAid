@@ -18,6 +18,7 @@ requireAdmin(); // Ensures session is active and user is role 2
                 <li class="nav-item mx-2"><a href="../admin/brand.php" class="nav-link">Brands</a></li>
                 <li class="nav-item mx-2"><a href="../admin/category.php" class="nav-link">Categories</a></li>
                 <li class="nav-item mx-2"><a href="../admin/service.php" class="nav-link">Services</a></li>
+                <li class="nav-item mx-2"><a href="../admin/manage_providers.php" class="nav-link">Approvals <span class="badge bg-danger rounded-pill">!</span></a></li>
                 
                 <li class="nav-item dropdown ms-4">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">

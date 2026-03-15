@@ -1,3 +1,9 @@
+<?php
+require_once '../settings/db_class.php';
+$db = new db_conn();
+$categories = $db->db_fetch_all("SELECT * FROM categories ORDER BY cat_name ASC") ?: [];
+$brands = $db->db_fetch_all("SELECT * FROM brands ORDER BY brand_name ASC") ?: [];
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -200,8 +206,32 @@
                                         <label class="form-check-label" for="victim">Survivor/User</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="role" id="owner" value="2">
-                                        <label class="form-check-label" for="owner">Service Provider</label>
+                                        <input class="form-check-input" type="radio" name="role" id="sp" value="3">
+                                        <label class="form-check-label" for="sp">Service Provider</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Hidden Service Provider Details -->
+                            <div id="sp-details" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="provider_category" class="form-label"><i class="fa fa-briefcase"></i> Service Category</label>
+                                        <select class="form-select" id="provider_category" name="provider_category">
+                                            <option value="" selected disabled>Select Category</option>
+                                            <?php foreach($categories as $cat): ?>
+                                                <option value="<?php echo $cat['cat_id']; ?>"><?php echo htmlspecialchars($cat['cat_name']); ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="provider_brand" class="form-label"><i class="fa fa-hospital"></i> Organization/Brand</label>
+                                        <select class="form-select" id="provider_brand" name="provider_brand">
+                                            <option value="" selected disabled>Select Brand</option>
+                                            <?php foreach($brands as $b): ?>
+                                                <option value="<?php echo $b['brand_id']; ?>"><?php echo htmlspecialchars($b['brand_name']); ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

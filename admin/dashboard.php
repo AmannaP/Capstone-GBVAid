@@ -1,6 +1,7 @@
 <?php
 require_once '../settings/core.php';
 require_once '../controllers/chat_controller.php';
+require_once '../controllers/user_controller.php';
 
 
 // Restrict access to admins only
@@ -293,6 +294,25 @@ requireAdmin();
                     <h5>Awareness</h5>
                     <p>Post educational materials and campaigns to raise awareness about GBV.</p>
                     <a href="../admin/awareness.php" class="btn-purple">Manage Content</a>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-card position-relative">
+                    <div class="card-icon"><i class="bi bi-person-check-fill"></i></div>
+                    <h5>Provider Approval</h5>
+                    <p>Review and approve new Service Provider registration requests.</p>
+                    
+                    <?php 
+                        $pending_providers_count = count(get_pending_providers_ctr()); 
+                        if($pending_providers_count > 0): 
+                    ?>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <?= $pending_providers_count ?> New
+                        </span>
+                    <?php endif; ?>
+
+                    <a href="../admin/manage_providers.php" class="btn-purple">Manage Providers</a>
                 </div>
             </div>
 

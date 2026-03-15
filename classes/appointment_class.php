@@ -86,5 +86,41 @@ class Appointment extends db_conn {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Get bookings specific to an SP's Category
+     */
+    public function get_bookings_by_category($cat_id) {
+        if (!$this->db_connect()) return [];
+
+        $sql = "SELECT 
+                    a.*, 
+                    c.victim_name, 
+                    c.victim_contact,
+                    c.victim_id,
+                    p.service_title, 
+                    b.brand_name
+                FROM appointments a
+                JOIN victim c ON a.victim_id = c.victim_id
+                JOIN services p ON a.service_id = p.service_id
+                JOIN brands b ON p.service_brand = b.brand_id
+                WHERE p.service_cat = ?
+                ORDER BY a.appointment_date DESC, a.appointment_time ASC";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$cat_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Update Booking Status (for SPs)
+     */
+    public function update_booking_status($appt_id, $status) {
+        if (!$this->db_connect()) return false;
+        
+        $sql = "UPDATE appointments SET status = ? WHERE appointment_id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$status, $appt_id]);
+    }
 }
 ?>

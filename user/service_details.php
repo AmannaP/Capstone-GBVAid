@@ -1,6 +1,7 @@
 <?php
 require_once '../settings/core.php';
 require_once '../controllers/service_controller.php';
+require_once '../settings/db_class.php';
 
 if (!isset($_GET['id'])) {
     header("Location: service_page.php");
@@ -14,6 +15,10 @@ if (!$service) {
     echo "Service not found.";
     exit();
 }
+
+$sp_status = $service['sp_availability'] ?? 'available';
+$sp_note   = $service['sp_availability_note'] ?? '';
+$is_unavailable = ($sp_status === 'unavailable');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -132,7 +137,28 @@ if (file_exists('../includes/navbar.php')) {
 
         <div class="col-md-5 animate__animated animate__fadeInRight">
             <div class="booking-card card p-4">
-                <h4 class="fw-bold mb-4 text-center text-purple">Schedule Session</h4>
+                <h4 class="fw-bold mb-3 text-center text-purple">Schedule Session</h4>
+
+                <!-- Provider Availability Badge -->
+                <?php
+                    $badge_style = $sp_status === 'available'
+                        ? 'background:rgba(34,197,94,0.15); border:1px solid #22c55e; color:#22c55e;'
+                        : ($sp_status === 'busy'
+                            ? 'background:rgba(255,193,7,0.15); border:1px solid #ffc107; color:#ffc107;'
+                            : 'background:rgba(255,107,107,0.15); border:1px solid #ff6b6b; color:#ff6b6b;');
+                    $badge_icon = $sp_status === 'available' ? 'bi-check-circle-fill' : ($sp_status === 'busy' ? 'bi-hourglass-split' : 'bi-slash-circle-fill');
+                    $badge_text = $sp_status === 'available' ? 'Provider Available' : ($sp_status === 'busy' ? 'Provider Busy — Limited Slots' : 'Provider Currently Unavailable');
+                ?>
+                <div class="text-center mb-4">
+                    <span class="badge rounded-pill px-3 py-2 fw-bold" style="<?= $badge_style ?> font-size:0.82rem;">
+                        <i class="bi <?= $badge_icon ?> me-1"></i><?= $badge_text ?>
+                    </span>
+                    <?php if (!empty($sp_note)): ?>
+                        <div class="small mt-2" style="color:#b89fd4;">
+                            <i class="bi bi-info-circle me-1"></i><?= htmlspecialchars($sp_note) ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
                 
                 <form id="booking-form">
                     <input type="hidden" name="service_id" value="<?= $service['service_id'] ?>">
@@ -162,8 +188,17 @@ if (file_exists('../includes/navbar.php')) {
                         <textarea name="notes" class="form-control" rows="4" placeholder="Briefly describe your situation so we can prepare..."></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-purple w-100 py-3 fw-bold rounded-pill mb-3">
-                        Confirm Appointment
+                    <?php if ($is_unavailable): ?>
+                        <div class="alert mb-3" style="background:rgba(255,107,107,0.1); border:1px solid rgba(255,107,107,0.4); border-radius:12px; color:#ff6b6b;">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <strong>Bookings Paused</strong> — This provider is currently unavailable. You may still submit your request and they will contact you when available.
+                        </div>
+                    <?php endif; ?>
+
+                    <button type="submit" class="btn btn-purple w-100 py-3 fw-bold rounded-pill mb-3"
+                            <?= $is_unavailable ? 'style="opacity:0.55; cursor:not-allowed;" title="Provider unavailable"' : '' ?>
+                            id="bookBtn">
+                        <?= $is_unavailable ? '<i class="bi bi-clock me-2"></i>Request (Provider Unavailable)' : 'Confirm Appointment' ?>
                     </button>
                     
                     <p class="text-center small opacity-50 mb-0">

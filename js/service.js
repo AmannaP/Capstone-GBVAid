@@ -214,8 +214,20 @@ $(document).ready(function () {
                                 <div class="col-md-4 col-sm-6 mb-4">
                                     <div class="card service-card h-100 shadow-sm border-0" style="border-radius: 12px; overflow: hidden;">
                                         <a href="service_details.php?id=${p.service_id}" style="text-decoration:none;">
-                                            <img src="${imgUrl}" class="card-img-top" alt="${p.service_title}" 
-                                                style="height: 220px; object-fit: cover;">
+                                            <div class="position-relative">
+                                                <img src="${imgUrl}" class="card-img-top" alt="${p.service_title}" 
+                                                    style="height: 220px; object-fit: cover;">
+                                                
+                                                <!-- Availability Badge -->
+                                                <div class="position-absolute top-0 end-0 m-3">
+                                                    ${p.sp_availability === 'available' 
+                                                        ? '<span class="badge rounded-pill bg-success-subtle text-success border border-success px-2 py-1" style="font-size:0.65rem;"><i class="bi bi-circle-fill me-1" style="font-size:0.5rem;"></i>Available</span>'
+                                                        : p.sp_availability === 'busy'
+                                                        ? '<span class="badge rounded-pill bg-warning-subtle text-warning border border-warning px-2 py-1" style="font-size:0.65rem;"><i class="bi bi-circle-fill me-1" style="font-size:0.5rem;"></i>Busy</span>'
+                                                        : '<span class="badge rounded-pill bg-danger-subtle text-danger border border-danger px-2 py-1" style="font-size:0.65rem;"><i class="bi bi-circle-fill me-1" style="font-size:0.5rem;"></i>Unavailable</span>'
+                                                    }
+                                                </div>
+                                            </div>
                                         </a>
                                         
                                         <div class="card-body d-flex flex-column p-3">

@@ -90,7 +90,7 @@ $my_requests = get_user_group_suggestions_ctr($user_id);
         }
 
         .text-muted-custom {
-            color: #cbd5e1 !important;
+            color: #c8a8e9 !important;
         }
 
         .btn-action {
@@ -261,7 +261,7 @@ if (file_exists('../includes/navbar.php')) {
                     </div>
                     <h5 class="fw-bold card-title">Contact Help Desk</h5>
                     <p class="text-muted-custom small mb-4">Need technical assistance or have a specific question? Our team is here for you.</p>
-                    <a href="#" class="btn btn-action">Service Coming Soon...</a>
+                    <a href="help_desk.php" class="btn btn-action">Get Help</a>
                 </div>
             </div>
         </div>
@@ -269,34 +269,34 @@ if (file_exists('../includes/navbar.php')) {
     </div>
 </div>
 
-<div class="card bg-dark border-purple p-3">
-    <h5 class="text-white">My Suggested Groups</h5>
-    <table class="table table-dark table-hover small">
+<div style="background: rgba(26, 16, 51, 0.9); border: 1px solid #3c2a61; border-radius: 20px; padding: 1.5rem; margin: 0 0 30px 0;">
+    <h5 style="color: #e0aaff;"><i class="bi bi-people-fill me-2"></i>My Suggested Groups</h5>
+    <table class="table table-hover small mb-0">
         <thead>
-            <tr>
-                <th>Group Name</th>
-                <th>Status</th>
+            <tr style="border-bottom: 1px solid #3c2a61;">
+                <th style="color: #d980ff; background: transparent; border: none;">Group Name</th>
+                <th style="color: #d980ff; background: transparent; border: none;">Status</th>
             </tr>
         </thead>
         <tbody>
             <?php if (!empty($my_requests)): ?>
                 <?php foreach ($my_requests as $req): ?>
-                <tr>
-                    <td><?= htmlspecialchars($req['suggested_name']) ?></td>
-                    <td>
+                <tr style="border-bottom: 1px solid rgba(60,42,97,0.5);">
+                    <td style="color: #ffffff; background: transparent; border: none;"><?= htmlspecialchars($req['suggested_name']) ?></td>
+                    <td style="background: transparent; border: none;">
                         <?php if($req['status'] == 'approved'): ?>
                             <span class="badge bg-success">Approved</span>
                         <?php elseif($req['status'] == 'rejected'): ?>
                             <span class="badge bg-danger">Declined</span>
                         <?php else: ?>
-                            <span class="badge bg-warning text-dark">Pending Review</span>
+                            <span class="badge" style="background: rgba(191,64,255,0.3); border: 1px solid #bf40ff; color: #e0aaff;">Pending Review</span>
                         <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="2" class="text-center text-muted">You haven't suggested any groups yet.</td>
+                    <td colspan="2" class="text-center py-3" style="color: #c8a8e9; background: transparent; border: none;">You haven't suggested any groups yet.</td>
                 </tr>
             <?php endif; ?>
         </tbody>
@@ -306,7 +306,7 @@ if (file_exists('../includes/navbar.php')) {
 <footer class="text-center mt-5">
     <div class="container">
         <p class="mb-1 fw-semibold">© <?= date('Y'); ?> <span style="color: #bf40ff;">GBVAid</span></p>
-        <p class="small text-muted">Empowering safety and support through technology.</p>
+        <p class="small" style="color: #c8a8e9;">Empowering safety and support through technology.</p>
     </div>
 </footer>
 

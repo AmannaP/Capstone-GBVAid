@@ -1,6 +1,6 @@
 <?php
 // actions/update_profile_action.php
-session_start();
+require_once '../settings/core.php';
 require_once '../controllers/victim_controller.php';
 
 header('Content-Type: application/json');
@@ -64,5 +64,7 @@ if ($result) {
     }
 
     echo json_encode(['status' => 'success', 'message' => 'Profile updated successfully']);
+} else {
+    echo json_encode(['status' => 'error', 'message' => 'Could not update profile. Please try again.']);
 }
 ?>

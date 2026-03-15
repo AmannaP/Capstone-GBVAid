@@ -34,11 +34,15 @@ $(document).ready(function () {
                     }).then((result) => {
                         if (result.isConfirmed) {
                             // Redirect based on user role
-                            if (response.role === '2' || response.role === 2) {
-                                // Admin
+                            if (response.role == 2) {
                                 window.location.href = '../admin/dashboard.php';
+                            } else if (response.role == 3) {
+                                if (response.sp_approved == 1) {
+                                    window.location.href = '../sp/dashboard.php';
+                                } else {
+                                    window.location.href = '../sp/pending_approval.php';
+                                }
                             } else {
-                                // Regular victim
                                 window.location.href = '../user/dashboard.php';
                             }
                         }

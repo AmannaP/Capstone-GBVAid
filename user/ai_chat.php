@@ -156,6 +156,9 @@
         <div class="container-fluid d-flex flex-column h-100" style="max-width: 900px;">
             
             <div class="header-section d-flex justify-content-between align-items-center">
+                <a href="dashboard.php" class="btn btn-outline-light btn-sm me-3 rounded-circle border-0">
+                    <i class="bi bi-arrow-left fs-5"></i>
+                </a>
                 <div>
                     <h3 class="text-white fw-bold m-0">
                         <i class="bi bi-heart-pulse-fill text-danger"></i> Safe Space Venting

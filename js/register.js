@@ -1,5 +1,14 @@
 // js/register.js
 $(document).ready(function() {
+    // Toggle SP details visibility
+    $('input[name="role"]').change(function() {
+        if ($(this).val() == '3') {
+            $('#sp-details').slideDown();
+        } else {
+            $('#sp-details').slideUp();
+        }
+    });
+
     $('#register-form').submit(function(e) {
         e.preventDefault();
 
@@ -10,6 +19,9 @@ $(document).ready(function() {
         city = $('#city').val();
         phone_number = $('#phone_number').val();
         role = $('input[name="role"]:checked').val();
+        
+        provider_category = $('#provider_category').val();
+        provider_brand = $('#provider_brand').val();
 
         if (fullName == '' || email == '' || password == '' || phone_number == '' || country == '' || city == '') {
             Swal.fire({
@@ -29,6 +41,17 @@ $(document).ready(function() {
             return;
         }
 
+        if (role == '3') {
+            if (!provider_category || !provider_brand) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Service Providers must select a Category and Brand!',
+                });
+                return;
+            }
+        }
+
         $.ajax({
             url: '../actions/register_victim_action.php',
             type: 'POST',
@@ -40,7 +63,9 @@ $(document).ready(function() {
                 country: country,
                 city: city,
                 phone_number: phone_number,
-                role: role
+                role: role,
+                provider_category: provider_category,
+                provider_brand: provider_brand
             },
             success: function(response) {
                 if (response.status === 'success') {

@@ -25,12 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Using a fallback for role in case it's not in your DB yet
         $_SESSION['role'] = $user['user_role'] ?? 2; 
         $_SESSION['user_image'] = $user['victim_image'] ?? null;
+        $_SESSION['sp_approved'] = $user['sp_approved'] ?? 0;
 
         // --- SUCCESS RESPONSE (This was commented out!) ---
         echo json_encode([
             "success" => true,
             "message" => "Login successful",
-            "role" => $_SESSION['role']
+            "role" => $_SESSION['role'],
+            "sp_approved" => $_SESSION['sp_approved']
         ]);
         exit; // Exit here after successful response
     } else {

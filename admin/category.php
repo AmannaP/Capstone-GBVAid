@@ -24,80 +24,73 @@ if (!isAdmin()) {
 
     <style>
         body {
-            background-color: #f8f9fa;
-            color: #333;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f0a1e;
+            background-image: radial-gradient(#3c2a61 1px, transparent 1px);
+            background-size: 30px 30px;
+            font-family: 'Poppins', sans-serif;
+            color: #ffffff;
         }
 
-        /* Admin Navbar */
         .navbar-admin {
-            background-color: #c453eaff;
-            box-shadow: 0 4px 12px rgba(196, 83, 234, 0.3);
+            background: rgba(26, 16, 51, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #3c2a61;
             padding: 15px 0;
         }
 
-        .navbar-brand {
-            font-weight: 800;
-            color: #fff !important;
-            font-size: 1.5rem;
-        }
-
-        .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-        .nav-link:hover {
-            color: #fff !important;
-            transform: translateY(-2px);
-        }
+        .navbar-brand { font-weight: 800; color: #e0aaff !important; font-size: 1.5rem; }
+        .nav-link { color: rgba(255, 255, 255, 0.8) !important; font-weight: 500; transition: all 0.3s; }
+        .nav-link:hover, .nav-link.active { color: #d980ff !important; }
 
         .btn-logout {
-            background-color: white;
-            color: #c453eaff;
-            border: 2px solid white;
+            background-color: transparent;
+            color: #e0aaff;
+            border: 2px solid #bf40ff;
             border-radius: 50px;
             padding: 5px 20px;
             font-weight: 700;
             text-decoration: none;
             transition: all 0.3s;
         }
-        .btn-logout:hover {
-            background-color: transparent;
-            color: white;
-        }
+        .btn-logout:hover { background-color: #bf40ff; color: white; }
 
-        /* Page Title */
-        .page-title {
-            color: #c453eaff;
-            font-weight: 800;
-            margin-bottom: 10px;
-        }
+        .page-title { color: #e0aaff; font-weight: 800; margin-bottom: 10px; }
 
-        /* Cards */
         .content-card {
-            border: none;
+            border: 1px solid #3c2a61;
             border-radius: 15px;
-            background: white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            background: rgba(26, 16, 51, 0.9);
+            box-shadow: 0 4px 20px rgba(191, 64, 255, 0.1);
             margin-bottom: 30px;
             overflow: hidden;
         }
 
         .card-header-custom {
-            background-color: white;
-            border-bottom: 2px solid #f0f0f0;
+            background-color: rgba(191, 64, 255, 0.1);
+            border-bottom: 1px solid #3c2a61;
             padding: 20px 30px;
+            color: #e0aaff;
         }
 
-        .card-body {
-            padding: 30px;
-        }
+        .card-body { padding: 30px; }
 
-        /* Table Styling */
+        .form-control {
+            background-color: #0f0a1e;
+            border: 1px solid #3c2a61;
+            color: #fff;
+            border-radius: 8px;
+        }
+        .form-control:focus {
+            border-color: #bf40ff;
+            box-shadow: 0 0 0 4px rgba(191, 64, 255, 0.2);
+            background-color: #150d2b;
+            color: #fff;
+        }
+        .form-control::placeholder { color: #6c4898; opacity: 1; }
+
         .table thead th {
-            background-color: #c453eaff;
-            color: white;
+            background: rgba(157, 78, 221, 0.3);
+            color: #e0aaff;
             font-weight: 600;
             border: none;
             padding: 15px;
@@ -105,33 +98,40 @@ if (!isAdmin()) {
         .table tbody td {
             padding: 15px;
             vertical-align: middle;
-            color: #555;
+            color: #ffffff;
+            border-color: #3c2a61;
         }
-        .table-striped tbody tr:nth-of-type(odd) {
-            background-color: rgba(196, 83, 234, 0.02);
+        .table tbody tr { background: transparent; }
+        .table tbody tr:hover { background: rgba(191, 64, 255, 0.07); }
+        /* Override Bootstrap 5 striped table variable */
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            --bs-table-color: #ffffff;
+            --bs-table-bg: rgba(60, 42, 97, 0.2);
+            --bs-table-striped-color: #ffffff;
+            --bs-table-striped-bg: rgba(60, 42, 97, 0.2);
+            background-color: rgba(60, 42, 97, 0.2);
+            color: #ffffff;
+        }
+        .table-striped > tbody > tr:nth-of-type(even) > * {
+            --bs-table-color: #ffffff;
+            --bs-table-bg: transparent;
+            background-color: transparent;
+            color: #ffffff;
         }
 
-        /* Buttons */
         .btn-purple {
-            background-color: #c453eaff;
+            background: linear-gradient(135deg, #9d4edd 0%, #bf40ff 100%);
             border: none;
             color: white;
             font-weight: 600;
             padding: 10px 25px;
-            transition: background 0.3s;
+            border-radius: 50px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(191, 64, 255, 0.3);
         }
-        .btn-purple:hover {
-            background-color: #a020f0;
-            color: white;
-        }
+        .btn-purple:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(191, 64, 255, 0.5); color: white; }
 
-        .footer {
-            margin-top: 50px;
-            text-align: center;
-            font-size: 0.9em;
-            color: #888;
-            padding-bottom: 30px;
-        }
+        .footer { margin-top: 50px; text-align: center; font-size: 0.9em; color: #e0aaff; padding-bottom: 30px; }
     </style>
 </head>
 <body>
@@ -163,14 +163,14 @@ if (!isAdmin()) {
                 
                 <div class="text-center mb-5">
                     <h2 class="page-title">Manage Service Categories</h2>
-                    <p class="text-muted" style="max-width: 700px; margin: 0 auto;">
+                    <p style="color: #c8a8e9; max-width: 700px; margin: 0 auto;">
                         Create and organize support categories like <em>Legal Aid</em>, <em>Counseling</em>, <em>Medical Support</em>, and <em>Safe Shelters</em>.
                     </p>
                 </div>
 
                 <div class="content-card">
                     <div class="card-header-custom">
-                        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-folder-plus me-2"></i>Add New Category</h5>
+                        <h5 class="fw-bold mb-0" style="color: #e0aaff;"><i class="bi bi-folder-plus me-2"></i>Add New Category</h5>
                     </div>
                     <div class="card-body">
                         <form id="add-category-form">
@@ -180,14 +180,14 @@ if (!isAdmin()) {
                                     <i class="bi bi-plus-lg me-2"></i>Add Category
                                 </button>
                             </div>
-                            <small class="text-muted ms-1 mt-2 d-block">Tip: Keep names concise (e.g., "Legal Aid", not "We provide legal help")</small>
+                            <small style="color: #8a68b0;" class="ms-1 mt-2 d-block">Tip: Keep names concise (e.g., "Legal Aid", not "We provide legal help")</small>
                         </form>
                     </div>
                 </div>
 
                 <div class="content-card">
                     <div class="card-header-custom d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-list-task me-2"></i>Existing Categories</h5>
+                        <h5 class="fw-bold mb-0" style="color: #e0aaff;"><i class="bi bi-list-task me-2"></i>Existing Categories</h5>
                     </div>
                     <div class="p-0">
                         <table class="table table-striped mb-0" id="category-table">

@@ -10,7 +10,7 @@ require_once '../controllers/user_controller.php';
 
 header('Content-Type: application/json');
 
-session_start();
+require_once '../settings/core.php';
 
 $response = array();
 
@@ -33,10 +33,12 @@ $country = $_POST['country'];
 $city = $_POST['city'];
 $phone_number = $_POST['phone_number'];
 $role = $_POST['role'];
+$provider_category = $_POST['provider_category'] ?? null;
+$provider_brand = $_POST['provider_brand'] ?? null;
 
 // Call Controller
 try {
-    $user_id = register_user_ctr($name, $email, $password, $country, $city, $phone_number, $role);
+    $user_id = register_user_ctr($name, $email, $password, $country, $city, $phone_number, $role, $provider_category, $provider_brand);
 
     if ($user_id) {
         $response['status'] = 'success';
