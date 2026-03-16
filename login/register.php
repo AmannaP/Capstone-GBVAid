@@ -226,15 +226,17 @@ $brands = $db->db_fetch_all("SELECT * FROM brands ORDER BY brand_name ASC") ?: [
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="provider_brand" class="form-label"><i class="fa fa-hospital"></i> Organization/Brand</label>
-                                        // The brand dropdown will be dynamically populated based on the selected category using JavaScript
+                                        <!-- // The brand dropdown will be dynamically populated based on the selected category using JavaScript -->
                                         <select class="form-select" id="provider_brand" name="provider_brand">
                                             <option value="" selected disabled>Select Organization</option> 
                                         </select>
-                                          
+
                                     </div>
+                                <div class="mb-3" style="color: #d980ff;">
+                                    <h4>If brand or category is not found please email admin@gbvaid.org to create it.</h4>
+                                </div>
                                 </div>
                             </div>
-
                             <button type="submit" class="btn btn-custom w-100 animate-pulse-custom">Create Account</button>
                         </form>
                     </div>
