@@ -33,8 +33,9 @@ $country = $_POST['country'];
 $city = $_POST['city'];
 $phone_number = $_POST['phone_number'];
 $role = $_POST['role'];
-$provider_category = $_POST['provider_category'] ?? null;
-$provider_brand = $_POST['provider_brand'] ?? null;
+
+$provider_category = (!empty($_POST['provider_category'])) ? $_POST['provider_category'] : null;
+$provider_brand = (!empty($_POST['provider_brand'])) ? $_POST['provider_brand'] : null;
 
 // Call Controller
 try {

@@ -226,12 +226,11 @@ $brands = $db->db_fetch_all("SELECT * FROM brands ORDER BY brand_name ASC") ?: [
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="provider_brand" class="form-label"><i class="fa fa-hospital"></i> Organization/Brand</label>
+                                        // The brand dropdown will be dynamically populated based on the selected category using JavaScript
                                         <select class="form-select" id="provider_brand" name="provider_brand">
-                                            <option value="" selected disabled>Select Brand</option>
-                                            <?php foreach($brands as $b): ?>
-                                                <option value="<?php echo $b['brand_id']; ?>"><?php echo htmlspecialchars($b['brand_name']); ?></option>
-                                            <?php endforeach; ?>
+                                            <option value="" selected disabled>Select Organization</option> 
                                         </select>
+                                          
                                     </div>
                                 </div>
                             </div>
