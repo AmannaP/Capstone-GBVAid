@@ -6,7 +6,47 @@ $(document).ready(function() {
             $('#sp-details').slideDown();
         } else {
             $('#sp-details').slideUp();
+            // Reset fields if switching back to survivor
+            $('#provider_category').val('');
+            $('#provider_brand').html('<option value="" selected disabled>Select Organization</option>');
         }
+    });
+
+      // Dependent Dropdown Logic: Fetch brands when category changes
+    $('#provider_category').change(function() {
+        const catId = $(this).val();
+        const $brandSelect = $('#provider_brand');
+
+        if (!catId) return;
+
+        // Show loading state
+        $brandSelect.html('<option value="" disabled selected>Loading available brands...</option>');
+
+        $.ajax({
+            url: '../actions/get_brands_by_category.php',
+            type: 'GET',
+            data: { cat_id: catId },
+            dataType: 'json',
+            success: function(data) {
+                $brandSelect.html('<option value="" selected disabled>Select Organization</option>');
+                
+                if (data.length === 0) {
+                    $brandSelect.append('<option value="" disabled>No organizations found in this category</option>');
+                } else {
+                    data.forEach(function(brand) {
+                        $brandSelect.append(`<option value="${brand.id}">${brand.name}</option>`);
+                    });
+                }
+            },
+            error: function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Could not fetch brands. Please check your connection.',
+                });
+                $brandSelect.html('<option value="" selected disabled>Error loading brands</option>');
+            }
+        });
     });
 
     $('#register-form').submit(function(e) {
