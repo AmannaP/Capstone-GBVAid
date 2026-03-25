@@ -17,14 +17,14 @@ if (!defined("DB_USERNAME")) {
 
 // 3. Database Password
 if (!defined("DB_PASSWORD")) {
-    // define("DB_PASSWORD", getenv('MYSQLPASSWORD') ?: "SEzrunnqUlMUQdQgSZKVldLlFHhDTtYu");
-    define("DB_PASSWORD", getenv('MYSQLPASSWORD') ?: "");
+    define("DB_PASSWORD", getenv('MYSQLPASSWORD') ?: "SEzrunnqUlMUQdQgSZKVldLlFHhDTtYu");
+    //define("DB_PASSWORD", getenv('MYSQLPASSWORD') ?: "");
 }
 
 // 4. Database Name (local - "capstone")
 if (!defined("DB_NAME")) {
-    define("DB_NAME", getenv('MYSQLDATABASE') ?: "capstone");
-    // define("DB_NAME", getenv('MYSQLDATABASE') ?: "railway");
+    //define("DB_NAME", getenv('MYSQLDATABASE') ?: "capstone");
+    define("DB_NAME", getenv('MYSQLDATABASE') ?: "railway");
 }
 
 // 5. Database Port (Local - "3306")
