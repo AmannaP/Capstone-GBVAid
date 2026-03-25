@@ -19,9 +19,9 @@ function fetch_brands_ctr() {
 }
 
 // UPDATE a brand
-function update_brand_ctr($brand_id, $new_name) {
+function update_brand_ctr($brand_id, $new_name, $cat_id) {
     $brand = new Brand();
-    return $brand->updateBrand($brand_id, $new_name);
+    return $brand->updateBrand($brand_id, $new_name, $cat_id);
 }
 
 // DELETE a brand

@@ -151,12 +151,15 @@ $groups = get_chat_groups_ctr();
                                 </div>
                             </div>
                             <div class="d-flex gap-2">
+                                <a href="../user/chat_room.php?id=<?= $g['group_id'] ?>" class="btn btn-sm btn-outline-success rounded-pill" title="Enter Chat Room">
+                                    <i class="bi bi-chat-left-dots-fill"></i>
+                                </a>
                                 <button class="btn btn-sm btn-outline-info rounded-pill" 
-                                        onclick='openEditModal(<?= json_encode($g, JSON_HEX_APOS) ?>)'>
+                                        onclick='openEditModal(<?= json_encode($g, JSON_HEX_APOS) ?>)' title="Edit Group">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                                 <button class="btn btn-sm btn-outline-danger rounded-pill" 
-                                        onclick="confirmDelete(<?= $g['group_id'] ?>)">
+                                        onclick="confirmDelete(<?= $g['group_id'] ?>)" title="Delete Group">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>

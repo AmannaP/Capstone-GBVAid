@@ -1,6 +1,7 @@
 # CakePHP 3
-/uploads
-/settings
+/uploads/sos_audio/*
+/settings/db_cred.php
+/login/logout.php
 
 /vendor/*
 /config/app.php

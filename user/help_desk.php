@@ -322,22 +322,37 @@ $display_name = htmlspecialchars($user['victim_name'] ?? $_SESSION['name'] ?? 'F
         const btn = $(this).find('.btn-submit');
         btn.html('<i class="bi bi-hourglass-split me-2"></i>Sending...').prop('disabled', true);
 
-        // Simulate submission (since this is a capstone demo)
-        setTimeout(() => {
-            Swal.fire({
-                icon: 'success',
-                title: 'Message Sent!',
-                html: 'Thank you for reaching out. Our support team will review your message and get back to you within <strong>24 hours</strong>.',
-                confirmButtonColor: '#bf40ff',
-                background: '#1a1033',
-                color: '#fff',
-                confirmButtonText: 'Got it!'
-            }).then(() => {
-                $('[name="category"]').val('');
-                $('[name="message"]').val('');
+        // Submit form via AJAX
+        $.ajax({
+            url: '../actions/submit_ticket_action.php',
+            method: 'POST',
+            data: { category: category, message: message },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Message Sent!',
+                        html: 'Thank you for reaching out. Our support team will review your message and get back to you within <strong>24 hours</strong>.',
+                        confirmButtonColor: '#bf40ff',
+                        background: '#1a1033',
+                        color: '#fff',
+                        confirmButtonText: 'Got it!'
+                    }).then(() => {
+                        $('[name="category"]').val('');
+                        $('[name="message"]').val('');
+                        btn.html('<i class="bi bi-send-fill me-2"></i>Send Message').prop('disabled', false);
+                    });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Error', text: response.message, confirmButtonColor: '#bf40ff', background: '#1a1033', color: '#fff' });
+                    btn.html('<i class="bi bi-send-fill me-2"></i>Send Message').prop('disabled', false);
+                }
+            },
+            error: function() {
+                Swal.fire({ icon: 'error', title: 'Server Error', text: 'Something went wrong. Please try again later.', confirmButtonColor: '#bf40ff', background: '#1a1033', color: '#fff' });
                 btn.html('<i class="bi bi-send-fill me-2"></i>Send Message').prop('disabled', false);
-            });
-        }, 1200);
+            }
+        });
     });
 
     // FAQ toggle

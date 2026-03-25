@@ -16,7 +16,7 @@ if (!$group) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title><?= htmlspecialchars($group['group_name']) ?> | GBVAid</title>
+    <title><?= htmlspecialchars_decode($group['group_name'], ENT_QUOTES) ?> | GBVAid</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -153,7 +153,7 @@ if (!$group) {
             <i class="bi bi-arrow-left fs-5"></i>
         </a>
         <div>
-            <h5 class="fw-bold mb-0 text-white"><?= htmlspecialchars($group['group_name']) ?></h5>
+            <h5 class="fw-bold mb-0 text-white"><?= htmlspecialchars_decode($group['group_name'], ENT_QUOTES) ?></h5>
             <small style="color: #e0aaff;"><i class="bi bi-circle-fill text-success me-1" style="font-size: 8px;"></i> Online Support</small>
         </div>
     </div>

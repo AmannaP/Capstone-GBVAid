@@ -8,11 +8,12 @@ class Brand extends db_conn {
      * Fetch all Service Providers (Brands)
      */
     public function getAllBrands() {
-        // FIX: Removed JOIN with categories because cat_id does not exist in brands table.
-        // We simply fetch all providers.
-        $sql = "SELECT brand_id, brand_name FROM brands";
-        
-        // Using standard db_class fetch all method for consistency with your MVC
+        // fetch all providers.
+        $sql = "SELECT b.brand_id, b.brand_name, b.cat_id, c.cat_name 
+                FROM brands b 
+                LEFT JOIN categories c ON b.cat_id = c.cat_id 
+                ORDER BY b.brand_id DESC";        
+        // Using standard db_class fetch all method for consistency
         return $this->db_fetch_all($sql);
     }
 
@@ -27,10 +28,7 @@ class Brand extends db_conn {
         if ($exists) {
             return ["status" => "error", "message" => "This provider already exists."];
         }
-
-        // FIX: Removed cat_id and created_by as they aren't in your schema
         $sql = "INSERT INTO brands (brand_name) VALUES ('$brand_name')";
-        
         if($this->db_query($sql)) {
             return ["status" => "success", "message" => "Provider added successfully."];
         }
@@ -41,8 +39,8 @@ class Brand extends db_conn {
     /**
      * Update brand name
      */
-    public function updateBrand($brand_id, $new_name) {
-        $sql = "UPDATE brands SET brand_name = '$new_name' WHERE brand_id = '$brand_id'";
+    public function updateBrand($brand_id, $new_name, $cat_id) {
+        $sql = "UPDATE brands SET brand_name = '$new_name', cat_id = '$cat_id' WHERE brand_id = '$brand_id'";
         
         if($this->db_query($sql)) {
             return ["status" => "success", "message" => "Provider updated successfully."];

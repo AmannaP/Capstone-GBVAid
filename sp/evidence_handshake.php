@@ -17,12 +17,13 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] != 3 || $_SESSION['sp_approved'
         body {
             background-color: #0f0a1e;
             color: #ffffff;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
             background-image: radial-gradient(#3c2a61 1px, transparent 1px);
             background-size: 30px 30px;
+            background-attachment: fixed;
         }
         .handshake-card {
-            background: rgba(26, 16, 51, 0.9);
+            background: #1a1033;
             border: 1px solid #bf40ff;
             border-radius: 20px;
             padding: 40px;

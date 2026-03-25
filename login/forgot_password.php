@@ -127,18 +127,29 @@ $(document).ready(function() {
 
         $.post('../actions/forgot_password_action.php', { email: $('#email').val() }, function(res) {
             if (res.success) {
-                // Since this is a capstone without a real mail server, we'll display the link visually for testing.
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Email Sent!',
-                    html: `A password reset link has been dispatched.<br><br><small class="text-warning">(Demo Mode) <a href="${res.reset_link}" style="color:#bf40ff;">Click here to simulate opening email</a></small>`,
-                    confirmButtonColor: '#bf40ff',
-                    background: '#1a1033',
-                    color: '#fff'
-                });
+                // If the backend returned a demo link (because Composer isn't installed locally), show it
+                if (res.reset_link) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Email Simulation Mode',
+                        html: `${res.message}<br><br><small class="text-warning"><a href="${res.reset_link}" style="color:#bf40ff;">Click here to simulate opening email</a></small>`,
+                        confirmButtonColor: '#bf40ff',
+                        background: '#1a1033',
+                        color: '#fff'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Email Sent!',
+                        text: res.message,
+                        confirmButtonColor: '#bf40ff',
+                        background: '#1a1033',
+                        color: '#fff'
+                    });
+                }
                 $('#forgotForm')[0].reset();
             } else {
-                Swal.fire('Error', res.message, 'error');
+                Swal.fire({ icon: 'error', title: 'Error', text: res.message, confirmButtonColor: '#bf40ff', background: '#1a1033', color: '#fff' });
             }
         }, 'json').fail(function() {
             Swal.fire('Error', 'Connection failed.', 'error');

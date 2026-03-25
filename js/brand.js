@@ -112,43 +112,58 @@ $(document).ready(function () {
     $(document).on("click", ".update-btn", function () {
         const brand_id = $(this).data("id");
         const oldName = $(this).data("name");
+        
+        // Grab the categories from the existing dropdown on the page
+        const categoryOptions = $('#category_id').html();
 
         Swal.fire({
-            title: "Update Brand Name",
-            input: "text",
-            inputLabel: "Enter new brand name",
-            inputValue: oldName,
-            showCancelButton: true,
-            confirmButtonText: "Update",
-            confirmButtonColor: "#bf40ff",
+            title: "Update Brand",
             background: "#1a1033",
             color: "#fff",
-            preConfirm: (value) => {
-                if (!value || value.trim().length < 2) {
-                    Swal.showValidationMessage("Please enter a valid brand name (at least 2 characters)");
+            html: `
+                <div class="text-start">
+                    <label class="form-label small" style="color: #d980ff;">Brand Name</label>
+                    <input id="swal-input1" class="form-control mb-3" value="${oldName}">
+                    <label class="form-label small" style="color: #d980ff;">Category</label>
+                    <select id="swal-input2" class="form-select">
+                        ${categoryOptions}
+                    </select>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: "Save Changes",
+            confirmButtonColor: "#bf40ff",
+            preConfirm: () => {
+                return {
+                    name: document.getElementById('swal-input1').value.trim(),
+                    cat: document.getElementById('swal-input2').value
                 }
-            },
+            }
         }).then((result) => {
             if (result.isConfirmed) {
+                const { name, cat } = result.value;
+                if (!name || name.length < 2 || !cat) {
+                    Swal.fire("Error", "Please provide valid name and category", "error");
+                    return;
+                }
+
                 $.ajax({
                     url: "../actions/update_brand_action.php",
                     type: "POST",
                     dataType: "json",
-                    data: { brand_id: brand_id, brand_name: result.value.trim() },
+                    data: { brand_id: brand_id, brand_name: name, cat_id: cat },
                     success: function (res) {
                         if (res.status === "success") {
                             Swal.fire({ icon: "success", title: "Updated!", text: res.message, confirmButtonColor: "#bf40ff", background: "#1a1033", color: "#fff" }).then(fetchBrands);
                         } else {
                             Swal.fire({ icon: "error", title: "Error", text: res.message, confirmButtonColor: "#bf40ff", background: "#1a1033", color: "#fff" });
                         }
-                    },
-                    error: function () {
-                        Swal.fire({ icon: "error", title: "Error", text: "Server error occurred.", confirmButtonColor: "#bf40ff", background: "#1a1033", color: "#fff" });
                     }
                 });
             }
         });
     });
+
 
     // DELETE brand
     $(document).on("click", ".delete-btn", function () {
@@ -166,7 +181,7 @@ $(document).ready(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "../actions/delete_brand_action.php",
+                    url: "../actions/delete_brand.php",
                     type: "POST",
                     dataType: "json",
                     data: { brand_id },

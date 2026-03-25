@@ -29,15 +29,20 @@ $evidences = get_victim_evidence_ctr($victim_id) ?? [];
         body {
             background-color: #0f0a1e;
             color: #ffffff;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
             background-image: radial-gradient(#3c2a61 1px, transparent 1px);
             background-size: 30px 30px;
+            background-attachment: fixed;
         }
-        .vault-header {
-            background: linear-gradient(135deg, rgba(76, 29, 149, 0.9), rgba(191, 64, 255, 0.15));
-            padding: 40px 0;
-            border-bottom: 1px solid #3c2a61;
+        .dashboard-header {
+            margin-top: 50px;
             margin-bottom: 40px;
+        }
+        .welcome-text {
+            background: linear-gradient(to bottom, #ffffff 20%, #e0aaff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
         }
         .evidence-table { color: #fff; width: 100%; border-collapse: separate; border-spacing: 0 10px; }
         .evidence-table th { color: #e0aaff; font-weight: 500; padding: 10px; border-bottom: 1px solid #3c2a61; }
@@ -70,20 +75,18 @@ $evidences = get_victim_evidence_ctr($victim_id) ?? [];
 
 <?php include '../views/sp_navbar.php'; ?>
 
-<div class="vault-header">
-    <div class="container d-flex justify-content-between align-items-center">
-        <div>
-            <h2 class="fw-bold mb-1"><i class="bi bi-shield-lock-fill me-2" style="color:#bf40ff;"></i><?= htmlspecialchars($victim['victim_name']) ?>'s Vault</h2>
-            <p class="opacity-75 mb-0 d-flex align-items-center">
-                <i class="bi bi-circle-fill text-success me-2" style="font-size: 10px;"></i>
-                Connection Secured (PIN Validated)
-            </p>
-        </div>
-        <div>
-            <a href="../actions/lock_vault_action.php" class="btn btn-outline-danger rounded-pill px-4">
-                <i class="bi bi-lock-fill me-2"></i>Lock Vault
-            </a>
-        </div>
+<div class="container dashboard-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2 class="welcome-text display-6 mb-1"><i class="bi bi-shield-lock-fill me-2" style="color:#bf40ff;"></i><?= htmlspecialchars($victim['victim_name']) ?>'s Vault</h2>
+        <p class="opacity-75 mb-0 d-flex align-items-center text-muted-custom">
+            <i class="bi bi-circle-fill text-success me-2" style="font-size: 10px;"></i>
+            Connection Secured (PIN Validated)
+        </p>
+    </div>
+    <div>
+        <a href="../actions/lock_vault_action.php" class="btn btn-outline-danger rounded-pill px-4">
+            <i class="bi bi-lock-fill me-2"></i>Lock Vault
+        </a>
     </div>
 </div>
 

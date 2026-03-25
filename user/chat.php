@@ -126,8 +126,23 @@ $groups = get_chat_groups_ctr();
 </head>
 <body>
 
-<?php include '../views/navbar.php'; ?>
-
+<?php 
+if (isset($_SESSION['role'])) {
+    if ($_SESSION['role'] == 2) {
+        echo '<nav class="navbar navbar-expand-lg" style="background-color: rgba(196, 83, 234, 0.2); backdrop-filter: blur(10px); padding: 15px 0; border-bottom: 1px solid rgba(191, 64, 255, 0.3);"><div class="container"><a class="navbar-brand fw-bold" href="../admin/dashboard.php" style="color: #e0aaff;"><i class="bi bi-shield-lock-fill me-2"></i>GBVAid Admin</a><a href="../admin/dashboard.php" class="btn btn-sm btn-outline-light rounded-pill ms-auto">Back to Dashboard</a></div></nav>';
+    } elseif ($_SESSION['role'] == 3) {
+        if (file_exists('../includes/sp_navbar.php')) {
+            include '../includes/sp_navbar.php';
+        } else {
+            include '../views/sp_navbar.php';
+        }
+    } else {
+        include '../views/navbar.php';
+    }
+} else {
+    include '../views/navbar.php';
+}
+?>
 <div class="container my-5">
     <div class="text-center mb-5">
         <h2 class="page-title display-5">Community Support Groups</h2>

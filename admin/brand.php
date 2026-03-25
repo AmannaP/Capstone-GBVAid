@@ -57,6 +57,14 @@ $categories = fetch_categories_ctr();
         .nav-link:hover, .nav-link.active {
             color: #d980ff !important;
         }
+        .bg-purple-outline {
+            background: rgba(191, 64, 255, 0.1);
+            border: 1px solid rgba(191, 64, 255, 0.4);
+            color: #e0aaff;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
 
         .btn-logout {
             background-color: transparent;

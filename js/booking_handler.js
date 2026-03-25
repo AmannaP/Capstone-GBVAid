@@ -1,5 +1,31 @@
 // js/booking_handler.js
 $(document).ready(function() {
+    // Dynamic Slot Disable Logic
+    $('input[name="date"]').on('change', function() {
+        const date = $(this).val();
+        const service_id = $('input[name="service_id"]').val();
+        const timeSelect = $('select[name="time"]');
+        
+        if (!date) return;
+        
+        // Reset previously disabled options
+        timeSelect.find('option').prop('disabled', false).text(function() {
+            return $(this).text().replace(' (Booked)', '');
+        });
+        
+        $.get('../actions/fetch_booked_slots.php', { service_id: service_id, date: date }, function(bookedSlots) {
+            if (bookedSlots && bookedSlots.length > 0) {
+                timeSelect.find('option').each(function() {
+                    const val = $(this).val();
+                    if (val && bookedSlots.includes(val)) {
+                        $(this).prop('disabled', true).text($(this).text() + ' (Booked)');
+                    }
+                });
+            }
+        }, 'json');
+    });
+
+    // Form Submission Logic
     $('#booking-form').on('submit', function(e) {
         e.preventDefault();
         

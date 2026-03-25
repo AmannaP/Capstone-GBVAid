@@ -34,10 +34,11 @@ class Chat extends db_conn {
     public function get_messages($group_id) {
         if (!$this->db_connect()) return [];
         
-        // Join with victim table to get Sender Name
-        $sql = "SELECT m.*, v.victim_name 
+        // Join with victim table to get Sender Name and Role, and categories for SP
+        $sql = "SELECT m.*, v.victim_name, v.user_role, c.cat_name 
                 FROM chat_messages m
                 JOIN victim v ON m.victim_id = v.victim_id
+                LEFT JOIN categories c ON v.provider_category_id = c.cat_id
                 WHERE m.group_id = ?
                 ORDER BY m.created_at ASC";
         
@@ -144,6 +145,20 @@ class Chat extends db_conn {
     public function get_victim_groups($victim_id) {
         if (!$this->db_connect()) return [];
         
+        // Check if user is Admin or SP
+        $sqlRole = "SELECT user_role FROM victim WHERE victim_id = ?";
+        $stmtRole = $this->db->prepare($sqlRole);
+        $stmtRole->execute([$victim_id]);
+        $roleRes = $stmtRole->fetch(PDO::FETCH_ASSOC);
+        
+        // If Admin (2) or SP (3), they see all chat groups
+        if ($roleRes && in_array($roleRes['user_role'], [2, 3])) {
+            $sql = "SELECT g.* FROM chat_groups g ORDER BY g.group_name ASC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
         $sql = "SELECT g.* 
                 FROM chat_groups g
                 JOIN chat_messages m ON g.group_id = m.group_id

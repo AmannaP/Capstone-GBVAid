@@ -12,6 +12,16 @@ if (!checkLogin()) {
 $user_id = $_SESSION['id'];
 $user = get_victim_ctr($user_id);
 $evidences = get_victim_evidence_ctr($user_id) ?? [];
+$folders = get_folders_ctr($user_id) ?? [];
+
+// Fetch Connected SPs for PIN Sharing
+$db = new db_conn();
+$connected_sps = [];
+if ($db->db_connect()) {
+    $stmt = $db->db->prepare("SELECT DISTINCT v.victim_id, v.victim_name FROM victim v JOIN services s ON s.service_cat = v.provider_category_id JOIN appointments a ON a.service_id = s.service_id WHERE a.victim_id = ? AND v.user_role = 3");
+    $stmt->execute([$user_id]);
+    $connected_sps = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 // Determine Profile Image
 $profile_pic = !empty($user['victim_image']) 
@@ -260,9 +270,32 @@ if ($user['user_role'] == 2) {
                         </div>
                     </div>
 
-                    <button class="btn btn-info w-100 fw-bold mb-2" onclick="generateVaultPin()">
-                        <i class="bi bi-key-fill me-1"></i> Generate New PIN
-                    </button>
+                    <div class="row g-2 mb-2">
+                        <div class="col-12">
+                            <button class="btn btn-info w-100 fw-bold" onclick="generateVaultPin()">
+                                <i class="bi bi-key-fill me-1"></i> Generate New PIN
+                            </button>
+                        </div>
+                    </div>
+                    <?php if (!empty($user['vault_pin']) && strtotime($user['vault_pin_expires']) > time()): ?>
+                    <div class="mt-3 text-start">
+                        <label class="form-label small text-muted"><i class="bi bi-person-check-fill"></i> Share with Provider</label>
+                        <div class="input-group mb-2">
+                            <select class="form-select" id="spSelect" style="background:#0f0a1e; color:#fff; border-color:#0dcaf0;">
+                                <option value="">Select Connected Provider...</option>
+                                <?php foreach($connected_sps as $sp): ?>
+                                    <option value="<?= $sp['victim_id'] ?>"><?= htmlspecialchars($sp['victim_name']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button class="btn btn-outline-info" onclick="sendPinToSP()">
+                                <i class="bi bi-send-fill"></i> Send
+                            </button>
+                        </div>
+                        <button class="btn btn-sm btn-outline-info w-100 mt-1" onclick="copyPinDetails()">
+                            <i class="bi bi-clipboard"></i> Copy Access Details
+                        </button>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -308,6 +341,20 @@ if ($user['user_role'] == 2) {
                     
                     <form id="evidence-form" enctype="multipart/form-data">
                         <div class="mb-3">
+                            <label class="form-label"><i class="fa fa-folder"></i> Target Folder</label>
+                            <div class="input-group">
+                                <select name="folder_id" class="form-select">
+                                    <option value="">No Folder (Root Archive)</option>
+                                    <?php foreach($folders as $folder): ?>
+                                        <option value="<?= $folder['folder_id'] ?>"><?= htmlspecialchars($folder['folder_name']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <button type="button" class="btn btn-outline-light" onclick="createNewFolder()">
+                                    <i class="fa fa-plus"></i> New Folder
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label"><i class="fa fa-tag"></i> Evidence Title</label>
                             <input type="text" name="title" class="form-control" placeholder="e.g., Harassment WhatsApp Screenshots" required>
                         </div>
@@ -348,14 +395,21 @@ if ($user['user_role'] == 2) {
             </div>
 
             <!-- Evidence List -->
-            <h5 class="form-label mb-3"><i class="fa fa-archive"></i> My Saved Evidence</h5>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="form-label mb-0"><i class="fa fa-archive"></i> My Saved Evidence</h5>
+                <button type="button" class="btn btn-sm btn-outline-info" onclick="createZip()">
+                    <i class="fa fa-file-archive"></i> ZIP Selected
+                </button>
+            </div>
+            
+            <form id="zip-form" action="../actions/create_zip_action.php" method="POST">
             <div class="table-responsive">
                 <table class="evidence-table">
                     <thead>
                         <tr>
-                            <th>Type</th>
+                            <th style="width: 40px;"><input type="checkbox" id="selectAllEvidence" class="form-check-input"></th>
+                            <th>Folder</th>
                             <th>Details</th>
-                            <th>Date</th>
                             <th class="text-end">Actions</th>
                         </tr>
                     </thead>
@@ -373,19 +427,27 @@ if ($user['user_role'] == 2) {
                                     if(in_array($ext, ['mp4'])) $icon = "fa-video";
                                     if(in_array($ext, ['mp3','wav','m4a'])) $icon = "fa-microphone";
                                     if(in_array($ext, ['pdf'])) $icon = "fa-file-pdf";
+                                    if(in_array($ext, ['zip'])) $icon = "fa-file-archive";
+
+                                    $folderName = "Root";
+                                    if ($ev['folder_id']) {
+                                        foreach($folders as $f) {
+                                            if ($f['folder_id'] == $ev['folder_id']) {
+                                                $folderName = $f['folder_name']; break;
+                                            }
+                                        }
+                                    }
                                 ?>
                                 <tr>
-                                    <td class="text-center"><i class="fa <?= $icon ?> evidence-icon"></i></td>
+                                    <td><input type="checkbox" name="evidence_ids[]" value="<?= $ev['evidence_id'] ?>" class="form-check-input evidence-checkbox"></td>
+                                    <td><span class="badge bg-secondary opacity-75"><i class="fa fa-folder"></i> <?= htmlspecialchars($folderName) ?></span></td>
                                     <td>
                                         <strong><?= htmlspecialchars($ev['title']) ?></strong><br>
                                         <small class="text-muted"><?= htmlspecialchars($ev['description']) ?></small>
                                     </td>
-                                    <td>
-                                        <small><?= date('M j, Y', strtotime($ev['uploaded_at'])) ?></small>
-                                    </td>
                                     <td class="text-end text-nowrap">
                                         <?php if($ev['file_type'] === 'raw_text'): ?>
-                                            <button class="btn btn-view-custom btn-sm" onclick="viewTextNote(<?= htmlspecialchars(json_encode($ev['raw_text_content'])) ?>)">
+                                            <button type="button" class="btn btn-view-custom btn-sm" onclick="viewTextNote(<?= htmlspecialchars(json_encode($ev['raw_text_content'])) ?>)">
                                                 <i class="fa fa-eye"></i> View
                                             </button>
                                         <?php else: ?>
@@ -394,7 +456,7 @@ if ($user['user_role'] == 2) {
                                             </a>
                                         <?php endif; ?>
                                         
-                                        <button class="btn btn-danger-custom btn-sm ms-1" onclick="deleteEvidence(<?= $ev['evidence_id'] ?>)">
+                                        <button type="button" class="btn btn-danger-custom btn-sm ms-1" onclick="deleteEvidence(<?= $ev['evidence_id'] ?>)">
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     </td>
@@ -404,6 +466,7 @@ if ($user['user_role'] == 2) {
                     </tbody>
                 </table>
             </div>
+            </form>
         </div>
     </div>
 </div>
@@ -536,7 +599,7 @@ if ($user['user_role'] == 2) {
                     confirmButtonColor: '#0dcaf0',
                     background: '#1a1033',
                     color: '#fff'
-                });
+                }).then(() => location.reload()); // Reload to show new buttons
             } else {
                 Swal.fire('Error', res.message, 'error');
             }
@@ -544,6 +607,69 @@ if ($user['user_role'] == 2) {
             btn.innerHTML = oText;
             btn.disabled = false;
         });
+    }
+
+    // Passcode Sharing Features
+    function sendPinToSP() {
+        const sp_id = $('#spSelect').val();
+        if (!sp_id) {
+            Swal.fire('Notice', 'Please select a provider first.', 'info');
+            return;
+        }
+        
+        const pin = $('#activePinDisplay').text();
+        $.post('../actions/share_pin_action.php', { sp_id: sp_id, pin: pin }, function(res) {
+            if (res.status === 'success') {
+                Swal.fire({ icon: 'success', title: 'Sent!', text: 'Your Vault PIN was sent securely.', confirmButtonColor: '#0dcaf0', background: '#1a1033', color: '#fff'});
+            } else {
+                Swal.fire('Error', res.message, 'error');
+            }
+        }, 'json');
+    }
+
+    function copyPinDetails() {
+        const pin = $('#activePinDisplay').text();
+        const msg = `Hello, my secure Vault PIN is: ${pin}. You can enter it on your portal to view my evidence archive.`;
+        navigator.clipboard.writeText(msg).then(() => {
+            Swal.fire({ icon: 'success', title: 'Copied!', text: 'PIN details copied to clipboard.', timer: 1500, showConfirmButton: false, background: '#1a1033', color: '#fff'});
+        });
+    }
+
+    // Folder Creation
+    function createNewFolder() {
+        Swal.fire({
+            title: 'New Folder',
+            input: 'text',
+            inputPlaceholder: 'Enter folder name (e.g., Harassment Logs)',
+            showCancelButton: true,
+            confirmButtonColor: '#bf40ff',
+            background: '#1a1033',
+            color: '#fff',
+            inputValidator: (value) => {
+                if (!value) return 'Folder name is required!'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('../actions/create_folder_action.php', { folder_name: result.value }, function(res) {
+                    if (res.status === 'success') location.reload();
+                    else Swal.fire('Error', res.message, 'error');
+                }, 'json');
+            }
+        });
+    }
+
+    // Select All Checkboxes
+    $('#selectAllEvidence').change(function() {
+        $('.evidence-checkbox').prop('checked', $(this).prop('checked'));
+    });
+
+    // Create Zip
+    function createZip() {
+        if ($('.evidence-checkbox:checked').length === 0) {
+            Swal.fire('Notice', 'Please select at least one evidence file to ZIP.', 'info');
+            return;
+        }
+        $('#zip-form').submit();
     }
 
     // Quick Exit URL Form
