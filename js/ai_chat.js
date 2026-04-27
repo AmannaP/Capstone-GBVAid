@@ -55,7 +55,7 @@ $(document).ready(function() {
                 success: function(response) {
                     $(`#${loadingId}`).remove();
 
-                    // Parse the response based on your proxy's JSON structure
+                    // Parse the response based on proxy's JSON structure
                     // Checking for both choices (OpenAI style) or direct reply field
                     let aiReply = "";
                     if (response.choices && response.choices[0].message) {

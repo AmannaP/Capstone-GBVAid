@@ -33,8 +33,8 @@ $apiKey = $_ENV['GEMINI_API_KEY'] ?? 'mock-key';
 
 $systemPrompt = "You are an empathetic AI listener for GBVAid, supporting survivors in Ghana. 
 Your tone is gentle and non-judgmental. 
-1. If the user needs DOVVSU, legal help, or medical assistance, guide them specifically to Ghanaian resources.
-2. If in danger, use the SOS button.";
+1. If the user mentions or needs DOVVSU, recommend them to use the legal services of DOVVSU. Legal help or medical assistance, recommend them to use the resources tips page.
+2. If in danger, recommend using the SOS button.";
 
 if ($isSilent) {
     $db = new db_conn();
