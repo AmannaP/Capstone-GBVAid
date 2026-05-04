@@ -108,18 +108,18 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <ul class="navbar-nav ms-auto align-items-center">
                 <li class="nav-item">
                     <a class="nav-link <?= ($current_page == 'dashboard.php') ? 'active' : '' ?>" href="dashboard.php">
-                        <i class="bi bi-grid-1x2 me-1"></i> Dashboard
+                        </i> Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?= ($current_page == 'triage.php') ? 'active' : '' ?>" href="triage.php">
-                        <i class="bi bi-activity me-1"></i> Case Triage
+                        </i> Case Triage
                         <span class="badge rounded-pill badge-alert">Live</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?= ($current_page == 'evidence_handshake.php') ? 'active' : '' ?>" href="evidence_handshake.php">
-                        <i class="bi bi-key me-1"></i> Evidence Vault
+                        </i> Evidence Vault
                     </a>
                 </li>
 

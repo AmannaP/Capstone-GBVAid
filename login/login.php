@@ -136,7 +136,10 @@
                             </div>
                             <div class="mb-4">
                                 <label for="password" class="form-label"><i class="fa fa-lock"></i> Password</label>
-                                <input type="password" class="form-control animate__animated animate__fadeInUp" id="password" name="password" placeholder="Enter your password" required>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control animate__animated animate__fadeInUp" id="password" name="password" placeholder="Enter your password" required style="padding-right: 40px;">
+                                    <i class="fa fa-eye" id="togglePassword" style="position: absolute; right: 15px; top: 15px; cursor: pointer; color: #bf40ff;"></i>
+                                </div>
                                 <div class="mt-2 text-end">
                                     <a href="forgot_password.php" class="highlight small">Forgot Password?</a>
                                 </div>
@@ -157,6 +160,16 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/login.js"></script>
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+
+        togglePassword.addEventListener('click', function (e) {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
 </body>
 
 </html>

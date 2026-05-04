@@ -28,8 +28,8 @@ function loadEnv($path) {
 
 loadEnv(__DIR__ . '/../.env');
 
-// TYPO FIX: Changed OPEN_API_KEY to GEMINI_API_KEY
-$apiKey = $_ENV['GEMINI_API_KEY'] ?? 'mock-key';
+// Prioritize native getenv() for deployment support (Docker/Heroku/cPanel)
+$apiKey = getenv('GEMINI_API_KEY') ?: ($_ENV['GEMINI_API_KEY'] ?? '') ?: 'mock-key';
 
 $systemPrompt = "You are an empathetic AI listener for GBVAid, supporting survivors in Ghana. 
 Your tone is gentle and non-judgmental. 

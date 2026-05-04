@@ -572,8 +572,41 @@ ALTER TABLE `reports`
 ALTER TABLE `services`
   ADD CONSTRAINT `services_ibfk_1` FOREIGN KEY (`service_cat`) REFERENCES `categories` (`cat_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `services_ibfk_2` FOREIGN KEY (`service_brand`) REFERENCES `brands` (`brand_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-COMMIT;
+--
+-- Table structure for table `help_desk_tickets`
+--
 
+CREATE TABLE `help_desk_tickets` (
+  `ticket_id` int(11) NOT NULL AUTO_INCREMENT,
+  `victim_id` int(11) NOT NULL,
+  `category` varchar(100) NOT NULL,
+  `message` text NOT NULL,
+  `status` enum('Pending','Resolved') DEFAULT 'Pending',
+  `admin_reply` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `resolved_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`ticket_id`),
+  KEY `fk_ticket_victim` (`victim_id`),
+  CONSTRAINT `fk_ticket_victim` FOREIGN KEY (`victim_id`) REFERENCES `victim` (`victim_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Table structure for table `direct_messages`
+--
+
+CREATE TABLE `direct_messages` (
+  `msg_id` int(11) NOT NULL AUTO_INCREMENT,
+  `sender_id` int(11) NOT NULL,
+  `receiver_id` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `is_read` tinyint(1) DEFAULT 0,
+  PRIMARY KEY (`msg_id`),
+  FOREIGN KEY (`sender_id`) REFERENCES `victim`(`victim_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`receiver_id`) REFERENCES `victim`(`victim_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

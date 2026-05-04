@@ -324,6 +324,24 @@ requireAdmin();
                     <a href="../admin/manage_groups.php" class="btn-purple">Manage Groups</a>
                 </div>
             </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-icon"><i class="bi bi-megaphone"></i></div>
+                    <h5>Help Desk</h5>
+                    <p>Manage help desk requests and provide support to users.</p>
+                    <a href="../admin/help_desk.php" class="btn-purple">Manage Help Desk</a>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-icon"><i class="bi bi-chat-heart-fill"></i></div>
+                    <h5>Community Support</h5>
+                    <p>Participate in active chat rooms as an Administrator to offer assistance.</p>
+                    <a href="../user/chat.php" class="btn-purple">Join Discussions</a>
+                </div>
+            </div>
         </div>
 
         <audio id="policeSiren" src="../assets/sounds/police_siren.mp3" preload="auto"></audio>

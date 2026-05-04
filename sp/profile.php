@@ -17,7 +17,7 @@ $sp_info = $db->db_fetch_one("
     SELECT v.provider_category_id, c.cat_name, b.brand_name
     FROM victim v
     LEFT JOIN categories c ON v.provider_category_id = c.cat_id
-    LEFT JOIN brands b ON v.service_brand = b.brand_id
+    LEFT JOIN brands b ON v.provider_brand_id = b.brand_id
     WHERE v.victim_id = $sp_id
 ");
 
@@ -272,13 +272,6 @@ $profile_pic = !empty($user['victim_image'])
                                     <i class="bi bi-patch-check-fill me-1"></i>Approved
                                 </span>
                             </div>
-                        </div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-icon"><i class="bi bi-calendar-event"></i></div>
-                        <div>
-                            <div class="info-lbl">Member Since</div>
-                            <div class="info-val"><?= date('F j, Y', strtotime($user['victim_created_at'] ?? 'now')) ?></div>
                         </div>
                     </div>
                 </div>

@@ -62,6 +62,18 @@ if ($all_bookings) {
         if ($s == 'resolved' || $s == 'completed') $resolved_count++;
     }
 }
+
+/**
+ * Fetch Direct Messages (Shared PINs)
+ */
+$msg_query = "
+    SELECT m.*, v.victim_name 
+    FROM direct_messages m 
+    JOIN victim v ON m.sender_id = v.victim_id 
+    WHERE m.receiver_id = $sp_id 
+    ORDER BY m.created_at DESC
+";
+$inbox_messages = $db->db_fetch_all($msg_query) ?: [];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -73,96 +85,118 @@ if ($all_bookings) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
-            background-color: #0f0a1e;
+            background-color: #0f0a1e; /* Matches User Dashboard */
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
             color: #ffffff;
-            font-family: 'Poppins', sans-serif;
             background-image: radial-gradient(#3c2a61 1px, transparent 1px);
             background-size: 30px 30px;
             background-attachment: fixed;
         }
 
+        /* Dashboard Header */
         .dashboard-header {
-            background: linear-gradient(135deg, rgba(76, 29, 149, 0.8) 0%, rgba(30, 27, 75, 0.6) 100%);
-            backdrop-filter: blur(10px);
-            padding: 60px 0;
-            border-bottom: 1px solid #bf40ff;
+            margin-top: 50px;
             margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(191, 64, 255, 0.2);
+        }
+        
+        .welcome-text {
+            background: linear-gradient(to bottom, #ffffff 20%, #e0aaff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
         }
 
-        .text-neon-purple {
-            color: #e0aaff;
-            text-shadow: 0 0 10px rgba(191, 64, 255, 0.3);
-        }
-
-        .stat-card {
-            background: rgba(26, 16, 51, 0.9);
+        /* Card Styling - Matches User Dashboard Glassmorphism */
+        .dashboard-card {
             border: 1px solid #3c2a61;
             border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            transition: all 0.3s ease;
+            transition: all 0.3s ease-in-out;
+            background: rgba(26, 16, 51, 0.9);
+            height: 100%;
             backdrop-filter: blur(5px);
+            padding: 30px 20px;
+            text-align: center;
         }
 
-        .stat-card:hover {
+        .dashboard-card:hover {
             transform: translateY(-8px);
             border-color: #bf40ff;
             box-shadow: 0 12px 25px rgba(191, 64, 255, 0.2);
+            background: rgba(36, 20, 69, 0.95);
         }
 
-        .stat-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 0 8px rgba(191, 64, 255, 0.4));
-        }
-
-        .stat-number {
-            font-size: 2.8rem;
-            font-weight: 800;
-            color: #ffffff;
-            line-height: 1;
-        }
-
-        .text-custom-muted {
-            color: #b89fd4 !important;
-            font-weight: 500;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            margin-top: 5px;
-        }
-
-        .action-card {
-            background: rgba(191, 64, 255, 0.1);
-            border: 1px solid #3c2a61;
-            border-radius: 24px;
-            padding: 40px;
-            color: white;
-            text-decoration: none;
-            display: block;
-            text-align: center;
-            transition: 0.3s;
-            height: 100%;
-        }
-
-        .action-card:hover {
-            background: rgba(191, 64, 255, 0.2);
-            transform: scale(1.03);
-            color: white;
-            border-color: #bf40ff;
-            box-shadow: 0 15px 35px rgba(191, 64, 255, 0.3);
-        }
-
-        .action-icon {
-            font-size: 3.5rem;
+        .card-icon {
+            font-size: 2.5rem;
+            color: #d980ff;
             margin-bottom: 20px;
-            color: #e0aaff;
+            background: rgba(191, 64, 255, 0.1);
+            border: 1px solid rgba(191, 64, 255, 0.3);
+            width: 80px;
+            height: 80px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
         }
 
-        .vault-gradient {
-            background: linear-gradient(135deg, #1e1b4b, #4c1d95) !important;
+        .dashboard-card h5 {
+            color: #e0aaff;
+            font-weight: 700;
+            margin-bottom: 15px;
         }
+
+        .dashboard-card p {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        /* Buttons */
+        .btn-purple {
+            background-color: #9d4edd;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 600;
+            width: 100%;
+            color: white;
+            transition: 0.3s;
+            display: inline-block;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(157, 78, 221, 0.3);
+        }
+
+        .btn-purple:hover {
+            background-color: #bf40ff;
+            color: white;
+            box-shadow: 0 6px 20px rgba(191, 64, 255, 0.5);
+        }
+
+        /* User Profile Style Standard Header Cards */
+        .profile-card {
+            background: #1a1033;
+            border: 1px solid #bf40ff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(191, 64, 255, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .profile-card-header {
+            background-color: #1a1033;
+            color: #e0aaff;
+            font-weight: 800;
+            border-bottom: 1px solid #3c2a61;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .inbox-table { color: #fff; width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+        .inbox-table th { color: #d980ff; font-weight: 500; padding: 10px; border-bottom: 1px solid #3c2a61; }
+        .inbox-table td { background: #150d2b; padding: 15px; vertical-align: middle; }
+        .inbox-table tr td:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+        .inbox-table tr td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+
     </style>
 </head>
 <body>
@@ -176,63 +210,111 @@ if (file_exists('../includes/sp_navbar.php')) {
 }
 ?>
 
-<div class="dashboard-header text-center">
-    <div class="container animate__animated animate__fadeIn">
-        <h1 class="fw-bold display-5 text-neon-purple">Provider Workspace</h1>
-        <h2 class="fw-normal fs-4 text-light mt-2">Welcome back, <?= htmlspecialchars($_SESSION['name']); ?></h2>
-        <div class="mt-3">
-            <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning border border-warning px-3 py-2">
-                <i class="bi bi-shield-check me-2"></i><?= htmlspecialchars($cat_name) ?> Division
-            </span>
+    <div class="container dashboard-header">
+        <div class="text-center mb-5">
+            <h2 class="welcome-text display-5">Provider Workspace</h2>
+            <h2 class="fw-normal fs-4 text-light mt-2">Welcome back, <?= htmlspecialchars($_SESSION['name']); ?></h2>
+            <div class="mt-3">
+                <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning border border-warning px-3 py-2">
+                    <i class="bi bi-shield-check me-2"></i><?= htmlspecialchars($cat_name) ?> Division
+                </span>
+            </div>
         </div>
-    </div>
-</div>
 
-<div class="container mb-5">
-    <!-- Statistics Section -->
-    <div class="row g-4 mb-5">
-        <div class="col-md-4">
-            <div class="stat-card">
-                <i class="bi bi-hourglass-split stat-icon text-warning"></i>
-                <div class="stat-number"><?= $pending_count ?></div>
-                <div class="text-custom-muted">Pending Requests</div>
+        <!-- Statistics Section (Mirrored from Admin Grid Format) -->
+        <h4 class="fw-bold mb-4" style="color: #e0aaff;">Overview Analytics</h4>
+        <div class="row g-4 justify-content-center mb-5">
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-icon" style="color: #ffc107; border-color: rgba(255, 193, 7, 0.3); background: rgba(255, 193, 7, 0.1);"><i class="bi bi-hourglass-split"></i></div>
+                    <h5>Pending Requests</h5>
+                    <h2 class="fw-bold text-white mb-0 display-4"><?= $pending_count ?></h2>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-icon" style="color: #0dcaf0; border-color: rgba(13, 202, 240, 0.3); background: rgba(13, 202, 240, 0.1);"><i class="bi bi-activity"></i></div>
+                    <h5>In-Progress Cases</h5>
+                    <h2 class="fw-bold text-white mb-0 display-4"><?= $active_count ?></h2>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-icon" style="color: #198754; border-color: rgba(25, 135, 84, 0.3); background: rgba(25, 135, 84, 0.1);"><i class="bi bi-check2-circle"></i></div>
+                    <h5>Resolved Incidents</h5>
+                    <h2 class="fw-bold text-white mb-0 display-4"><?= $resolved_count ?></h2>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="stat-card">
-                <i class="bi bi-activity stat-icon text-info"></i>
-                <div class="stat-number"><?= $active_count ?></div>
-                <div class="text-custom-muted">In-Progress Cases</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="stat-card">
-                <i class="bi bi-check2-circle stat-icon text-success"></i>
-                <div class="stat-number"><?= $resolved_count ?></div>
-                <div class="text-custom-muted">Resolved Incidents</div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Quick Actions Section -->
-    <h4 class="fw-bold mb-4 text-neon-purple ms-2">Operations</h4>
-    <div class="row g-4">
-        <div class="col-md-6">
-            <a href="triage.php" class="action-card">
-                <i class="bi bi-clipboard-pulse action-icon"></i>
-                <h3 class="fw-bold">Active Case Triage</h3>
-                <p class="opacity-75 mb-0 px-md-4">Review incoming crisis alerts, monitor AI triage suggestions, and update victim statuses.</p>
-            </a>
+        <!-- Quick Actions Section -->
+        <h4 class="fw-bold mb-4" style="color: #e0aaff;">Provider Operations</h4>
+        <div class="row g-4 justify-content-center mb-5">
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-icon"><i class="bi bi-clipboard-pulse"></i></div>
+                    <h5>Active Case Triage</h5>
+                    <p>Review incoming crisis alerts, monitor AI triage suggestions, and update victim statuses.</p>
+                    <a href="triage.php" class="btn-purple">Enter Triage</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-icon"><i class="bi bi-shield-lock-fill"></i></div>
+                    <h5>Evidence Vault Handshake</h5>
+                    <p>Securely access survivor-uploaded media using One-Time Authorization PINs for review.</p>
+                    <a href="evidence_handshake.php" class="btn-purple">Open Vault Tool</a>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-icon"><i class="bi bi-chat-quote-fill"></i></div>
+                    <h5>Community Support Groups</h5>
+                    <p>Enter survivor community groups to offer professional advice carrying your agency badge.</p>
+                    <a href="../user/chat.php" class="btn-purple" >Join Discussions</a>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <a href="evidence_handshake.php" class="action-card vault-gradient">
-                <i class="bi bi-shield-lock-fill action-icon"></i>
-                <h3 class="fw-bold">Evidence Vault Handshake</h3>
-                <p class="opacity-75 mb-0 px-md-4">Securely access survivor-uploaded media using One-Time Authorization PINs for legal or medical review.</p>
-            </a>
+
+        <!-- Inbox Section directly mimicking User Profile forms -->
+        <div class="profile-card">
+            <div class="profile-card-header">
+                <h4 class="mb-0"><i class="bi bi-envelope-check-fill me-2"></i>Inbox / Shared Actions</h4>
+            </div>
+            <div class="card-body p-4">
+                <?php if(empty($inbox_messages)): ?>
+                    <p class="text-muted text-center mb-0 my-4 py-4">No messages or shared PINs in your inbox.</p>
+                <?php else: ?>
+                    <div class="table-responsive">
+                        <table class="inbox-table">
+                            <thead>
+                                <tr>
+                                    <th style="padding-left: 20px;">From Survivor</th>
+                                    <th>Direct Message Component</th>
+                                    <th class="text-end" style="padding-right: 20px;">Received Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach($inbox_messages as $msg): ?>
+                                    <tr>
+                                        <td style="padding-left: 20px;"><strong><?= htmlspecialchars($msg['victim_name']) ?></strong></td>
+                                        <td><span style="color: #e0aaff;"><i class="bi bi-chat-left-dots-fill me-2" style="color: #bf40ff;"></i><?= htmlspecialchars($msg['message']) ?></span></td>
+                                        <td class="text-end" style="padding-right: 20px;">
+                                            <span style="color: #b89fd4; font-size: 0.85em;"><i class="bi bi-clock me-1"></i><?= date('M j, Y g:i A', strtotime($msg['created_at'])) ?></span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="text-center mt-5 mb-4">
+            <p class="text-muted small opacity-75" style="color: #cbd5e1;">&copy; <?= date('Y'); ?> GBVAid Professional Portal.</p>
         </div>
     </div>
-</div>
 
 <footer class="text-center py-4">
     <p class="small text-muted opacity-50 mb-0">GBVAid Professional Portal &copy; <?= date('Y') ?></p>

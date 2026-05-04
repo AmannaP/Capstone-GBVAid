@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = $_POST['description'] ?? '';
     $type = $_POST['evidence_type'] ?? 'raw_text'; // 'file' or 'raw_text'
     $raw_text_content = $_POST['raw_text_content'] ?? null;
+    $folder_id = !empty($_POST['folder_id']) ? $_POST['folder_id'] : null;
     
     $file_path = null;
     $file_type = 'raw_text';
@@ -81,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $file_type = 'raw_text';
     }
 
-    $result = add_evidence_ctr($victim_id, $title, $description, $file_path, $file_type, $raw_text_content);
+    $result = add_evidence_ctr($victim_id, $title, $description, $file_path, $file_type, $raw_text_content, $folder_id);
 
     if ($result) {
         echo json_encode(['status' => 'success', 'message' => 'Evidence securely saved to archive.']);

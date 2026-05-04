@@ -26,38 +26,65 @@ $bookings = get_bookings_by_category_ctr($cat_id);
         body {
             background-color: #0f0a1e;
             color: #ffffff;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
             background-image: radial-gradient(#3c2a61 1px, transparent 1px);
             background-size: 30px 30px;
+            background-attachment: fixed;
         }
-        .page-header {
-            background: linear-gradient(135deg, rgba(76, 29, 149, 0.9), rgba(191, 64, 255, 0.15));
-            padding: 40px 0;
-            border-bottom: 1px solid #3c2a61;
+        .dashboard-header {
+            margin-top: 50px;
             margin-bottom: 40px;
+            text-align: center;
+        }
+        .welcome-text {
+            background: linear-gradient(to bottom, #ffffff 20%, #e0aaff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
         }
         .case-card {
-            background: rgba(26, 16, 51, 0.9);
-            border: 1px solid #3c2a61;
-            border-radius: 15px;
+            background: #1a1033;
+            border: 1px solid #bf40ff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(191, 64, 255, 0.2);
             margin-bottom: 20px;
-            transition: 0.3s;
+            transition: 0.3s ease-in-out;
         }
-        .case-card:hover { border-color: #bf40ff; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(191, 64, 255, 0.2); }
+        .case-card:hover { 
+            border-color: #bf40ff; 
+            transform: translateY(-5px); 
+            box-shadow: 0 12px 25px rgba(191, 64, 255, 0.4); 
+            background: rgba(36, 20, 69, 0.95);
+        }
         .status-badge { font-weight: 600; padding: 5px 12px; border-radius: 50px; }
         .select-status { background-color: #1a1033; color: white; border: 1px solid #bf40ff; border-radius: 5px; padding: 5px; }
         .text-muted { color: #b89fd4 !important; }
+        .btn-purple {
+            background-color: #9d4edd;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 600;
+            color: white;
+            transition: 0.3s;
+            display: inline-block;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(157, 78, 221, 0.3);
+        }
+        .btn-purple:hover {
+            background-color: #bf40ff;
+            color: white;
+            box-shadow: 0 6px 20px rgba(191, 64, 255, 0.5);
+        }
     </style>
 </head>
 <body>
 
 <?php include '../views/sp_navbar.php'; ?>
 
-<div class="page-header text-center">
-    <div class="container">
-        <h2 class="fw-bold"><i class="bi bi-inboxes text-pink me-2"></i> Case Triage</h2>
-        <p class="opacity-75">Review new bookings, update case statuses, and connect with survivors.</p>
-    </div>
+<div class="container dashboard-header">
+    <h2 class="welcome-text display-5"><i class="bi bi-inboxes me-2"></i> Case Triage</h2>
+    <p class="text-muted-custom fs-5 mx-auto" style="max-width: 600px; color: #cbd5e1;">Review new bookings, update case statuses, and connect with survivors.</p>
 </div>
 
 <div class="container mb-5">

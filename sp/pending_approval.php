@@ -34,7 +34,7 @@ $is_rejected = ($sp_status == 2);
         body {
             background-color: #0f0a1e;
             color: #ffffff;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -42,6 +42,7 @@ $is_rejected = ($sp_status == 2);
             margin: 0;
             background-image: radial-gradient(#3c2a61 1px, transparent 1px);
             background-size: 30px 30px;
+            background-attachment: fixed;
         }
         .approval-card {
             background: #1a1033;
