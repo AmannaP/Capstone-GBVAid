@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($domain === 'localhost' || $domain === '127.0.0.1') {
                 $reset_link = "$protocol://$domain/Capstone-GBVAid/login/reset_password.php?token=$token";
             } else {
-                // Adjust this if your Railway app is not at the root
+                // Construct the reset link based on the production domain path
                 $reset_link = "$protocol://$domain/login/reset_password.php?token=$token";
             }
 

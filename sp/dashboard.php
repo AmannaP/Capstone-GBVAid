@@ -6,8 +6,10 @@
 require_once '../settings/core.php';
 require_once '../settings/db_class.php';
 
-// Ensure user is logged in, has the Provider role (3), and is approved
-// Note: Adjusted to use getUserId() or session ID based on your core.php setup
+/**
+ * Ensure user is authenticated, has the Service Provider role (3), 
+ * and their application has been approved by the administration.
+ */
 if (!isset($_SESSION['id']) || $_SESSION['role'] != 3) {
     header("Location: ../login/login.php");
     exit();

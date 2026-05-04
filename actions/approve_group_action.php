@@ -9,9 +9,9 @@ requireAdmin();
 $request_id = $_GET['id'] ?? null;
 
 if ($request_id) {
-    // It is better to use the controller (ctr) to keep logic consistent
+    // Use the controller (ctr) to keep logic consistent
     if (approve_suggestion_ctr($request_id)) {
-        // We use a header redirect instead of an echo script to avoid "headers already sent" errors
+        // Redirect to avoid "headers already sent" errors
         header("Location: ../admin/manage_requests.php?msg=approved");
     } else {
         header("Location: ../admin/manage_requests.php?error=failed");

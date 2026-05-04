@@ -5,13 +5,13 @@ require_once '../controllers/appointment_controller.php';
 
 header('Content-Type: application/json');
 
-// FIX: Use 'id' to match your core.php checkLogin() function
+// Verify that the user is logged in
 if (!checkLogin()) {
     echo json_encode(['status' => 'error', 'message' => 'Your session has expired. Please login again.']);
     exit();
 }
 
-// FIX: Get the user ID using your helper function from core.php
+// Retrieve the authenticated user ID from the session
 $uid = getUserId(); 
 $sid = $_POST['service_id'] ?? null;
 $date = $_POST['date'] ?? null;

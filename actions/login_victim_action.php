@@ -27,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user_image'] = $user['victim_image'] ?? null;
         $_SESSION['sp_approved'] = $user['sp_approved'] ?? 0;
 
-        // --- SUCCESS RESPONSE (This was commented out!) ---
         echo json_encode([
             "success" => true,
             "message" => "Login successful",

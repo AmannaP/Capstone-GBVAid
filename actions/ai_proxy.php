@@ -69,7 +69,7 @@ $ch = curl_init($url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // CRITICAL: Fixes XAMPP connection issues
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Disable SSL verification for local development environments
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'Content-Type: application/json'
 ]);

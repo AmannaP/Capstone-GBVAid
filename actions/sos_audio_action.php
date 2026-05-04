@@ -2,13 +2,11 @@
 // actions/sos_audio_action.php
 require_once '../settings/core.php';
 require_once '../classes/incident_class.php';
-
-// Allow from any origin (to handle chunking gracefully if CORS kicks in somehow)
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // We expect 'incident_id' via POST and an 'audio_data' file upload
+    // Expect 'incident_id' via POST and an 'audio_data' file upload
     $incident_id = filter_input(INPUT_POST, 'incident_id', FILTER_VALIDATE_INT);
     
     if (!$incident_id) {

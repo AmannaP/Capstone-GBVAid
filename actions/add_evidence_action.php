@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             $dest_path = $upload_dir . $secure_file_name;
 
-            // Optional: Allowed types filter
+            // Allowed types filter
             $allowed_exts = ['jpg', 'jpeg', 'png', 'pdf', 'mp3', 'mp4', 'docx', 'txt', 'm4a', 'wav'];
             if (!in_array($extension, $allowed_exts)) {
                 echo json_encode(['status' => 'error', 'message' => 'Invalid file format uploaded.']);
